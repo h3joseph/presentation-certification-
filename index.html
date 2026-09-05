@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soutenance RNCP 37827 — Plateforme météo CIFOR-ICRAF</title>
+<style>
+  :root{
+    --forest:#0A4F3C;
+    --forest-deep:#073328;
+    --lime:#8DC63F;
+    --orange:#F26522;
+    --bg:#F9F9F9;
+    --paper:#FFFFFF;
+    --ink:#333333;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:4vw 5vw;
+  }
+  .wrap{ max-width:760px; width:100%; }
+  .kicker{
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    font-size:.8rem;
+    font-weight:700;
+    color:var(--orange);
+    margin:0 0 .6rem;
+  }
+  h1{
+    font-size:clamp(1.6rem,3.4vw,2.4rem);
+    line-height:1.25;
+    margin:0 0 .5rem;
+    color:var(--forest-deep);
+  }
+  p.sub{ color:#555; margin:0 0 2.2rem; font-size:1rem; line-height:1.5; max-width:60ch; }
+  ol{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.9rem; }
+  li a{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    background:var(--paper);
+    border:1px solid #E4E4E4;
+    border-left:5px solid var(--forest);
+    border-radius:10px;
+    padding:1rem 1.3rem;
+    text-decoration:none;
+    color:var(--ink);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  li a:hover, li a:focus-visible{
+    transform:translateX(3px);
+    box-shadow:0 4px 16px rgba(10,79,60,.12);
+    outline:none;
+  }
+  .ep-name{ font-weight:700; font-size:1.05rem; color:var(--forest-deep); }
+  .ep-desc{ font-size:.85rem; color:#666; margin-top:.15rem; }
+  .ep-time{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:.8rem;
+    color:#fff;
+    background:var(--forest);
+    padding:.25rem .6rem;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  footer{ margin-top:2.4rem; font-size:.78rem; color:#999; }
+  footer a{ color:#999; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">Certification RNCP 37827 &middot; Développeur en IA</p>
+    <h1>Plateforme météo CIFOR-ICRAF — 5 épreuves</h1>
+    <p class="sub">Ordre réel de passage le jour de la soutenance (convocation), pas l&rsquo;ordre numérique des fichiers.</p>
+    <ol>
+      <li><a href="soutenance-e1.html">
+        <div><div class="ep-name">Épreuve 1 &middot; Analyse du besoin et conception</div><div class="ep-desc">C1&ndash;C5</div></div>
+        <span class="ep-time">15 min</span>
+      </a></li>
+      <li><a href="soutenance-e3.html">
+        <div><div class="ep-name">Épreuve 3 &middot; Industrialisation et DevOps</div><div class="ep-desc">C9&ndash;C13</div></div>
+        <span class="ep-time">20 min</span>
+      </a></li>
+      <li><a href="soutenance-e4.html">
+        <div><div class="ep-name">Épreuve 4 &middot; Développement de l&rsquo;application</div><div class="ep-desc">C14&ndash;C19</div></div>
+        <span class="ep-time">20 min</span>
+      </a></li>
+      <li><a href="soutenance-e2.html">
+        <div><div class="ep-name">Épreuve 2 &middot; Modèle IA et fiabilité des sources</div><div class="ep-desc">C6&ndash;C8</div></div>
+        <span class="ep-time">15 min</span>
+      </a></li>
+      <li><a href="soutenance-e5.html">
+        <div><div class="ep-name">Épreuve 5 &middot; Supervision et incidents</div><div class="ep-desc">C20&ndash;C21</div></div>
+        <span class="ep-time">10 min</span>
+      </a></li>
+    </ol>
+    <footer>github.com/h3joseph/certification-</footer>
+  </div>
+</body>
+</html>
