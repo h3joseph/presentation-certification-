@@ -117,19 +117,23 @@
 
   /* Transition and demo slides */
   .slide--transition, .slide--demo{ background:var(--forest-deep); }
-  /* Silhouette discrète de cacaoyers en pied de diapo (contexte agricole CIFOR-ICRAF) */
+  /* Cacaoyers en coin de diapo, hors de la zone de texte centrée (contexte agricole CIFOR-ICRAF) */
   .slide--dark, .slide--transition, .slide--demo{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='130' viewBox='0 0 220 130'%3E%3Cg fill='%230A4F3C' fill-opacity='0.4'%3E%3Cpath d='M40 130 L40 70 Q40 55 46 50 L46 130 Z'/%3E%3Cpath d='M10 55 Q0 30 25 20 Q35 5 55 15 Q75 5 85 25 Q100 30 90 50 Q95 65 75 68 Q60 78 45 68 Q25 75 15 62 Q0 65 10 55 Z'/%3E%3Cellipse cx='35' cy='85' rx='5' ry='11' transform='rotate(-15 35 85)'/%3E%3Cellipse cx='50' cy='95' rx='5' ry='12' transform='rotate(10 50 95)'/%3E%3Cellipse cx='38' cy='108' rx='4.5' ry='10' transform='rotate(-5 38 108)'/%3E%3C/g%3E%3Cg fill='%230A4F3C' fill-opacity='0.25'%3E%3Cpath d='M150 130 L150 90 Q150 80 154 76 L154 130 Z'/%3E%3Cpath d='M130 78 Q122 60 140 52 Q150 40 165 50 Q180 45 178 62 Q186 72 172 78 Q160 86 148 78 Q138 86 130 78 Z'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat:repeat-x;
-    background-position:bottom left;
-    background-size:220px 130px;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='110' viewBox='0 0 90 110'%3E%3Cg fill='%230A4F3C' fill-opacity='0.5'%3E%3Cpath d='M40 110 L40 60 Q40 48 45 44 L45 110 Z'/%3E%3Cpath d='M15 48 Q5 26 27 17 Q36 4 54 13 Q72 5 80 22 Q92 28 82 45 Q86 58 68 60 Q55 68 42 60 Q25 66 17 55 Q5 57 15 48 Z'/%3E%3Cellipse cx='34' cy='72' rx='4.5' ry='10' transform='rotate(-15 34 72)'/%3E%3Cellipse cx='47' cy='82' rx='4.5' ry='11' transform='rotate(10 47 82)'/%3E%3Cellipse cx='36' cy='94' rx='4' ry='9' transform='rotate(-5 36 94)'/%3E%3C/g%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='110' viewBox='0 0 90 110'%3E%3Cg fill='%230A4F3C' fill-opacity='0.32'%3E%3Cpath d='M40 110 L40 60 Q40 48 45 44 L45 110 Z'/%3E%3Cpath d='M15 48 Q5 26 27 17 Q36 4 54 13 Q72 5 80 22 Q92 28 82 45 Q86 58 68 60 Q55 68 42 60 Q25 66 17 55 Q5 57 15 48 Z'/%3E%3Cellipse cx='34' cy='72' rx='4.5' ry='10' transform='rotate(-15 34 72)'/%3E%3Cellipse cx='47' cy='82' rx='4.5' ry='11' transform='rotate(10 47 82)'/%3E%3Cellipse cx='36' cy='94' rx='4' ry='9' transform='rotate(-5 36 94)'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat:no-repeat, no-repeat;
+    background-position:left bottom, right bottom;
+    background-size:78px 95px, 60px 73px;
   }
-  /* Même silhouette, opacité réduite pour rester lisible sur fond clair */
+  /* Même motif, opacité réduite pour rester lisible sur fond clair */
   .slide--light{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='130' viewBox='0 0 220 130'%3E%3Cg fill='%230A4F3C' fill-opacity='0.14'%3E%3Cpath d='M40 130 L40 70 Q40 55 46 50 L46 130 Z'/%3E%3Cpath d='M10 55 Q0 30 25 20 Q35 5 55 15 Q75 5 85 25 Q100 30 90 50 Q95 65 75 68 Q60 78 45 68 Q25 75 15 62 Q0 65 10 55 Z'/%3E%3Cellipse cx='35' cy='85' rx='5' ry='11' transform='rotate(-15 35 85)'/%3E%3Cellipse cx='50' cy='95' rx='5' ry='12' transform='rotate(10 50 95)'/%3E%3Cellipse cx='38' cy='108' rx='4.5' ry='10' transform='rotate(-5 38 108)'/%3E%3C/g%3E%3Cg fill='%230A4F3C' fill-opacity='0.09'%3E%3Cpath d='M150 130 L150 90 Q150 80 154 76 L154 130 Z'/%3E%3Cpath d='M130 78 Q122 60 140 52 Q150 40 165 50 Q180 45 178 62 Q186 72 172 78 Q160 86 148 78 Q138 86 130 78 Z'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat:repeat-x;
-    background-position:bottom left;
-    background-size:220px 130px;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='110' viewBox='0 0 90 110'%3E%3Cg fill='%230A4F3C' fill-opacity='0.16'%3E%3Cpath d='M40 110 L40 60 Q40 48 45 44 L45 110 Z'/%3E%3Cpath d='M15 48 Q5 26 27 17 Q36 4 54 13 Q72 5 80 22 Q92 28 82 45 Q86 58 68 60 Q55 68 42 60 Q25 66 17 55 Q5 57 15 48 Z'/%3E%3Cellipse cx='34' cy='72' rx='4.5' ry='10' transform='rotate(-15 34 72)'/%3E%3Cellipse cx='47' cy='82' rx='4.5' ry='11' transform='rotate(10 47 82)'/%3E%3Cellipse cx='36' cy='94' rx='4' ry='9' transform='rotate(-5 36 94)'/%3E%3C/g%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='110' viewBox='0 0 90 110'%3E%3Cg fill='%230A4F3C' fill-opacity='0.1'%3E%3Cpath d='M40 110 L40 60 Q40 48 45 44 L45 110 Z'/%3E%3Cpath d='M15 48 Q5 26 27 17 Q36 4 54 13 Q72 5 80 22 Q92 28 82 45 Q86 58 68 60 Q55 68 42 60 Q25 66 17 55 Q5 57 15 48 Z'/%3E%3Cellipse cx='34' cy='72' rx='4.5' ry='10' transform='rotate(-15 34 72)'/%3E%3Cellipse cx='47' cy='82' rx='4.5' ry='11' transform='rotate(10 47 82)'/%3E%3Cellipse cx='36' cy='94' rx='4' ry='9' transform='rotate(-5 36 94)'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat:no-repeat, no-repeat;
+    background-position:left bottom, right bottom;
+    background-size:78px 95px, 60px 73px;
   }
   .transition-line{
     font-family:var(--font-display);
