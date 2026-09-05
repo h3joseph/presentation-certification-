@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veille et sélection d&rsquo;un service météo IA</title>
+<meta name="description" content="Support de projection pour la soutenance de l'Épreuve 2, RNCP 37827.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#0A4F3C;
+    --forest-deep:#073328;
+    --lime:#8DC63F;
+    --lime-deep:#5C8A2B;
+    --orange:#F26522;
+    --orange-deep:#C94E14;
+    --bg:#F9F9F9;
+    --paper:#FFFFFF;
+    --ink:#333333;
+    --ink-soft:#5B5F5C;
+    --line:#E3E1DA;
+    --code-bg:#0D2B22;
+    --code-ink:#E9F3EC;
+    --code-line:#1B4436;
+    --font-display:"Fraunces", Georgia, "Times New Roman", serif;
+    --font-body:"Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono:"JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{ font-family:var(--font-display); margin:0; text-wrap:balance; }
+  p{ margin:0; }
+  :focus-visible{ outline:2px solid var(--lime); outline-offset:3px; }
+
+  /* Deck shell */
+  .deck{
+    height:100vh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+  }
+  .slide{
+    min-height:100vh;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:5vh 6vw;
+    position:relative;
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .55s ease, transform .55s ease;
+  }
+  .slide.is-in{ opacity:1; transform:translateY(0); }
+  .slide--light{ background:var(--bg); color:var(--ink); }
+  .slide--dark{ background:var(--forest-deep); color:#EAF3EE; }
+  .slide--dark h1, .slide--dark h2{ color:#fff; }
+
+  .kicker{
+    font-family:var(--font-mono);
+    font-size:clamp(0.75rem,1.1vw,0.95rem);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--orange);
+    margin-bottom:1.4rem;
+  }
+  .slide--dark .kicker{ color:var(--lime); }
+
+  h1.big{
+    font-size:clamp(2.6rem,6.4vw,5rem);
+    font-weight:900;
+    line-height:1.05;
+    max-width:16ch;
+  }
+  h2.big{
+    font-size:clamp(2.1rem,5vw,3.6rem);
+    font-weight:700;
+    line-height:1.08;
+    max-width:18ch;
+    color:var(--forest-deep);
+  }
+  .sub{
+    font-size:clamp(1.05rem,1.9vw,1.5rem);
+    color:var(--ink-soft);
+    max-width:42ch;
+    margin-top:1.3rem;
+    line-height:1.5;
+  }
+  .slide--dark .sub{ color:#CFE4D8; }
+  .slide--dark .caption-line{ color:#CFE4D8; }
+
+  .signature{
+    margin-top:3.2rem;
+    font-family:var(--font-mono);
+    font-size:clamp(0.85rem,1.2vw,1rem);
+    color:#CFE4D8;
+    letter-spacing:0.04em;
+  }
+
+  /* Transition and demo slides */
+  .slide--transition, .slide--demo{ background:var(--forest-deep); }
+  /* Silhouette discrète de cacaoyers en pied de diapo (contexte agricole CIFOR-ICRAF) */
+  .slide--dark, .slide--transition, .slide--demo{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='130' viewBox='0 0 220 130'%3E%3Cg fill='%230A4F3C' fill-opacity='0.4'%3E%3Cpath d='M40 130 L40 70 Q40 55 46 50 L46 130 Z'/%3E%3Cpath d='M10 55 Q0 30 25 20 Q35 5 55 15 Q75 5 85 25 Q100 30 90 50 Q95 65 75 68 Q60 78 45 68 Q25 75 15 62 Q0 65 10 55 Z'/%3E%3Cellipse cx='35' cy='85' rx='5' ry='11' transform='rotate(-15 35 85)'/%3E%3Cellipse cx='50' cy='95' rx='5' ry='12' transform='rotate(10 50 95)'/%3E%3Cellipse cx='38' cy='108' rx='4.5' ry='10' transform='rotate(-5 38 108)'/%3E%3C/g%3E%3Cg fill='%230A4F3C' fill-opacity='0.25'%3E%3Cpath d='M150 130 L150 90 Q150 80 154 76 L154 130 Z'/%3E%3Cpath d='M130 78 Q122 60 140 52 Q150 40 165 50 Q180 45 178 62 Q186 72 172 78 Q160 86 148 78 Q138 86 130 78 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat:repeat-x;
+    background-position:bottom left;
+    background-size:220px 130px;
+  }
+  .transition-line{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(1.6rem,3.4vw,2.5rem);
+    color:#fff;
+    max-width:22ch;
+    line-height:1.3;
+  }
+  .transition-next{
+    margin-top:2.2rem;
+    font-family:var(--font-mono);
+    font-size:clamp(0.85rem,1.1vw,1rem);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--lime);
+  }
+  .demo-title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.6rem,3.4vw,2.4rem);
+    color:#fff;
+  }
+  .demo-list{
+    list-style:none;
+    padding:0;
+    margin:1.9rem 0 0;
+    display:flex;
+    flex-direction:column;
+    gap:0.8rem;
+    width:100%;
+    max-width:520px;
+  }
+  .demo-list li{
+    font-family:var(--font-mono);
+    font-size:clamp(0.95rem,1.6vw,1.1rem);
+    color:#EAF3EE;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:6px;
+    padding:0.75rem 1.1rem;
+    text-align:left;
+  }
+
+  /* Roadmap slide */
+  .roadmap{
+    list-style:none;
+    padding:0;
+    margin:2.4rem 0 0;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    width:100%;
+    max-width:640px;
+  }
+  .roadmap li{
+    display:flex;
+    align-items:center;
+    gap:1.1rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1rem 1.3rem;
+    text-align:left;
+  }
+  .roadmap .num{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:1.1rem;
+    color:#fff;
+    background:var(--forest);
+    width:2.4rem;
+    height:2.4rem;
+    flex:0 0 auto;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .roadmap span.label{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.05rem,1.9vw,1.35rem);
+    color:var(--forest-deep);
+  }
+
+  /* Content slide layout helpers */
+  .row{ display:flex; flex-wrap:wrap; gap:1.4rem; justify-content:center; margin-top:2.2rem; }
+
+  .pair-card{
+    flex:1 1 220px;
+    max-width:320px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-top:5px solid var(--forest);
+    border-radius:8px;
+    padding:1.6rem 1.4rem;
+  }
+  .pair-card:nth-child(2){ border-top-color:var(--orange); }
+  .pair-card:nth-child(3){ border-top-color:var(--lime-deep); }
+  .pair-card:nth-child(4){ border-top-color:var(--forest-deep); }
+  .pair-card .label{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.1rem,2.2vw,1.4rem);
+    color:var(--forest-deep);
+    margin-bottom:0.4rem;
+  }
+  .pair-card .detail{ color:var(--ink-soft); font-size:0.95rem; }
+
+  .flow{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:0.6rem;
+    margin-top:2.4rem;
+  }
+  .flow .step{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:clamp(0.9rem,1.5vw,1.15rem);
+    background:var(--forest);
+    color:#fff;
+    padding:0.75rem 1.2rem;
+    border-radius:999px;
+  }
+  .flow .arrow{ color:var(--lime-deep); font-size:1.4rem; }
+
+  .stats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:2.2rem;
+    justify-content:center;
+    margin-top:2.4rem;
+  }
+  .stat{ text-align:center; }
+  .stat .num{
+    display:block;
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:clamp(2.2rem,5.2vw,3.6rem);
+    color:var(--orange-deep);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .num.forest{ color:var(--forest); }
+  .stat .cap{
+    display:block;
+    margin-top:0.5rem;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+
+  .big-compare{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:2rem;
+    margin-top:1.2rem;
+    flex-wrap:wrap;
+  }
+  .big-compare .arrow{ font-size:2.6rem; color:var(--lime-deep); }
+
+  .chip-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:0.9rem;
+    margin-top:2.4rem;
+    width:100%;
+    max-width:760px;
+  }
+  .chip-grid .chip{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1rem 0.6rem;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.95rem;
+    color:var(--forest-deep);
+  }
+
+  .callout{
+    margin-top:2.2rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:6px solid var(--lime-deep);
+    border-radius:0 8px 8px 0;
+    padding:1.3rem 1.7rem;
+    max-width:640px;
+    text-align:left;
+  }
+  .callout .headline{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.05rem,1.9vw,1.3rem);
+    color:var(--forest-deep);
+  }
+  .callout .detail{ margin-top:0.45rem; color:var(--ink-soft); font-size:0.95rem; }
+  .callout.orange{ border-left-color:var(--orange-deep); }
+
+  pre.code{
+    text-align:left;
+    background:var(--code-bg);
+    color:var(--code-ink);
+    font-family:var(--font-mono);
+    font-size:clamp(0.8rem,1.2vw,0.98rem);
+    line-height:1.65;
+    padding:1.2rem 1.4rem;
+    border-radius:8px;
+    border:1px solid var(--code-line);
+    max-width:600px;
+    width:100%;
+    margin:1.8rem auto 0;
+    overflow-x:auto;
+  }
+  .kw{ color:var(--lime); }
+  .fn{ color:#F2C879; }
+  .str{ color:#8FD1B8; }
+
+  .code-label{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--forest-deep);
+    text-align:left;
+    width:100%;
+    max-width:600px;
+    margin:0 auto;
+  }
+  .caption-line{
+    margin-top:1.1rem;
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+
+  /* Controls */
+  .progress{
+    position:fixed;
+    top:0; left:0;
+    height:4px;
+    background:var(--lime);
+    width:0%;
+    z-index:80;
+    transition:width 0.25s ease;
+  }
+  .counter{
+    position:fixed;
+    right:1.4rem;
+    bottom:1.3rem;
+    display:flex;
+    align-items:center;
+    gap:0.3rem;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.35rem 0.8rem;
+    z-index:80;
+  }
+  .counter input{
+    width:2.4em;
+    border:none;
+    background:transparent;
+    color:var(--forest-deep);
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    font-weight:700;
+    text-align:right;
+    padding:0;
+    -moz-appearance:textfield;
+  }
+  .counter input::-webkit-outer-spin-button,
+  .counter input::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  .counter input:focus{ outline:none; }
+  .nav-btn{
+    position:fixed;
+    bottom:1.2rem;
+    width:2.6rem;
+    height:2.6rem;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--forest-deep);
+    font-size:1.2rem;
+    line-height:1;
+    cursor:pointer;
+    z-index:80;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .nav-btn:hover{ background:var(--forest); color:#fff; }
+  .nav-prev{ left:1.2rem; }
+  .nav-next{ left:4.2rem; }
+
+  .timer{
+    position:fixed;
+    top:1.2rem;
+    right:1.4rem;
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+    font-family:var(--font-mono);
+    font-size:0.9rem;
+    font-weight:700;
+    color:var(--forest-deep);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.4rem 0.9rem;
+    z-index:90;
+    cursor:pointer;
+    user-select:none;
+  }
+  .timer-dot{ width:0.5rem; height:0.5rem; border-radius:50%; background:var(--ink-soft); flex:none; }
+  .timer.is-running .timer-dot{ background:var(--lime); animation:timer-pulse 1.2s infinite; }
+  .timer.is-warning{ color:var(--orange-deep); border-color:var(--orange); }
+  .timer.is-warning .timer-dot{ background:var(--orange); }
+  .timer.is-danger{ color:#fff; background:var(--orange-deep); border-color:var(--orange-deep); }
+  .timer.is-danger .timer-dot{ background:#fff; }
+  @keyframes timer-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  .switch{
+    position:fixed;
+    top:1.2rem;
+    left:1.2rem;
+    z-index:95;
+  }
+  .switch-btn{
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    font-weight:700;
+    color:var(--forest-deep);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.4rem 0.9rem;
+    cursor:pointer;
+  }
+  .switch-btn:hover{ background:var(--forest); color:#fff; }
+  .switch-chev{ font-size:0.7em; display:inline-block; transition:transform 0.2s ease; }
+  .switch.is-open .switch-chev{ transform:rotate(180deg); }
+  .switch-menu{
+    position:absolute;
+    top:calc(100% + 0.5rem);
+    left:0;
+    min-width:190px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 12px 30px rgba(10,79,60,0.18);
+    padding:0.4rem;
+    display:none;
+    flex-direction:column;
+    gap:0.15rem;
+  }
+  .switch.is-open .switch-menu{ display:flex; }
+  .switch-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:0.6rem;
+    padding:0.5rem 0.7rem;
+    border-radius:8px;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color:var(--ink);
+    text-decoration:none;
+  }
+  .switch-item:hover{ background:var(--bg); }
+  .switch-item.is-current{ background:var(--forest-deep); color:#fff; pointer-events:none; }
+  .switch-item-time{ color:var(--ink-soft); font-size:0.75em; }
+  .switch-item.is-current .switch-item-time{ color:#CFE4D8; }
+
+  @media print{
+    .deck{ height:auto; overflow:visible; }
+    .slide{ min-height:100vh; break-inside:avoid; page-break-after:always; scroll-snap-align:none; opacity:1 !important; transform:none !important; }
+    .progress, .counter, .nav-btn, .timer, .switch{ display:none; }
+  }
+
+  /* ---- New components for Épreuve 2 ---- */
+
+  /* Horizontal bar comparison (benchmark metrics, Open-Meteo vs WeatherAPI) */
+  .metric-block{ width:100%; max-width:600px; margin-top:1.8rem; text-align:left; }
+  .metric-block:first-of-type{ margin-top:2rem; }
+  .metric-title{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:0.6rem;
+  }
+  .bar-row{ display:flex; align-items:center; gap:0.8rem; margin-top:0.5rem; }
+  .bar-row:first-child{ margin-top:0; }
+  .bar-name{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.85rem;
+    width:6.8rem;
+    flex:0 0 auto;
+    color:var(--ink);
+  }
+  .bar-track{ flex:1 1 auto; background:var(--line); border-radius:999px; height:1.6rem; overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:999px; display:flex; align-items:center; justify-content:flex-end; padding:0 0.6rem; }
+  .bar-fill.forest{ background:var(--forest); }
+  .bar-fill.orange{ background:var(--orange); }
+  .bar-value{ font-family:var(--font-mono); font-size:0.78rem; font-weight:700; color:#fff; white-space:nowrap; }
+
+  /* Service cards (présélection des 8 services) */
+  .service-category-title{
+    font-family:var(--font-mono);
+    font-size:0.76rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    text-align:left;
+    width:100%;
+    max-width:820px;
+    margin:1.7rem auto 0.7rem;
+  }
+  .service-category-title:first-of-type{ margin-top:0.6rem; }
+  .service-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    justify-content:center;
+    width:100%;
+    max-width:820px;
+    margin:0 auto;
+  }
+  .service-card{
+    flex:1 1 170px;
+    max-width:220px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-top:4px solid var(--forest);
+    border-radius:8px;
+    padding:0.95rem 1.05rem;
+    text-align:left;
+  }
+  .service-card.tag-free-ai{ border-top-color:var(--lime-deep); }
+  .service-card.tag-free{ border-top-color:var(--forest); }
+  .service-card.tag-paid{ border-top-color:var(--orange-deep); }
+  .service-card .name{ font-family:var(--font-display); font-weight:700; font-size:1rem; color:var(--forest-deep); }
+  .service-card .verdict{
+    font-family:var(--font-mono);
+    font-size:0.66rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    margin-top:0.35rem;
+    font-weight:700;
+  }
+  .service-card .verdict.kept{ color:var(--lime-deep); }
+  .service-card .verdict.compare{ color:var(--forest); }
+  .service-card .verdict.out{ color:var(--orange-deep); }
+  .service-card .detail{ margin-top:0.4rem; font-size:0.79rem; color:var(--ink-soft); line-height:1.4; }
+
+  /* Weighting bar (pondération du score composite) */
+  .weight-bar{
+    display:flex;
+    width:100%;
+    max-width:600px;
+    height:2.3rem;
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:1.9rem;
+  }
+  .weight-seg{ height:100%; }
+  .weight-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.7rem 1.4rem;
+    justify-content:center;
+    margin-top:1.1rem;
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    color:var(--ink-soft);
+  }
+  .weight-legend .dot{ display:inline-block; width:0.65em; height:0.65em; border-radius:50%; margin-right:0.4em; }
+
+  /* Comparison table (algorithmes du correcteur de biais) */
+  .compare-table{
+    width:100%;
+    max-width:600px;
+    margin-top:1.8rem;
+    border-collapse:collapse;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+  }
+  .compare-table th{ background:var(--forest-deep); color:#fff; font-weight:700; padding:0.55rem 0.8rem; text-align:left; }
+  .compare-table td{ padding:0.5rem 0.8rem; border-bottom:1px solid var(--line); color:var(--ink); text-align:left; }
+  .compare-table tr.win td{ background:rgba(141,198,63,0.16); color:var(--forest-deep); font-weight:700; }
+
+  .criteria-list{
+    list-style:none;
+    padding:0;
+    margin:2rem auto 0;
+    display:flex;
+    flex-direction:column;
+    gap:0.7rem;
+    width:100%;
+    max-width:640px;
+    text-align:left;
+  }
+  .criteria-list li{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:0.7rem 1rem;
+    font-size:0.92rem;
+    color:var(--ink);
+    display:flex;
+    gap:0.6rem;
+  }
+  .criteria-list li::before{
+    content:"\2713";
+    color:var(--lime-deep);
+    font-weight:700;
+    flex:0 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="switch" id="epreuveSwitch">
+  <button class="switch-btn" id="switchBtn" aria-haspopup="true" aria-expanded="false">Épreuve 2 <span class="switch-chev">&#9662;</span></button>
+  <div class="switch-menu" id="switchMenu" role="menu">
+    <a href="soutenance-e1.html" class="switch-item" role="menuitem">E1 <span class="switch-item-time">15 min</span></a>
+    <a href="soutenance-e3.html" class="switch-item" role="menuitem">E3 <span class="switch-item-time">20 min</span></a>
+    <a href="soutenance-e4.html" class="switch-item" role="menuitem">E4 <span class="switch-item-time">20 min</span></a>
+    <a href="soutenance-e2.html" class="switch-item is-current" role="menuitem">E2 <span class="switch-item-time">15 min</span></a>
+    <a href="soutenance-e5.html" class="switch-item" role="menuitem">E5 <span class="switch-item-time">10 min</span></a>
+  </div>
+</div>
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">
+  <input type="number" id="pageInput" min="1" value="1" aria-label="Aller à la diapositive numéro">
+  <span>/</span>
+  <span id="totalPages"></span>
+</div>
+<button class="nav-btn nav-prev" id="prevBtn" aria-label="Diapositive précédente">&#8592;</button>
+<button class="nav-btn nav-next" id="nextBtn" aria-label="Diapositive suivante">&#8594;</button>
+<div class="timer" id="timer" role="button" tabindex="0" aria-label="Minuteur de l'épreuve, 15 minutes. Clic pour démarrer ou mettre en pause, double-clic pour réinitialiser." title="Clic : démarrer/pause · Double-clic : réinitialiser (15 min officielles)">
+  <span class="timer-dot"></span>
+  <span id="timerDisplay">15:00</span>
+</div>
+
+<div class="deck" id="deck">
+
+  <section class="slide slide--dark">
+    <p class="kicker">RNCP 37827 &middot; Développeur en Intelligence Artificielle</p>
+    <h1 class="big">Épreuve 2</h1>
+    <p class="sub">Veille et sélection d&rsquo;un service externe de prévision météorologique par IA, et mise à disposition d&rsquo;un service interne de correction de prévision</p>
+  </section>
+
+  <section class="slide slide--dark">
+    <p class="kicker">Épreuve 2 · RNCP 37827</p>
+    <h1 class="big">Choisir la bonne source météo, avec preuves à l&rsquo;appui</h1>
+    <p class="sub">Veille, benchmark et configuration d&rsquo;un service externe de prévision météorologique fondé sur un modèle IA vérifiable, pour CIFOR-ICRAF</p>
+    <p class="caption-line">github.com/h3joseph/certification-</p>
+    <p class="signature">Joseph Haccandy</p>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Contexte</p>
+    <h2 class="big">Un centre de recherche sans modèle météo propre</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Aucun modèle propre</div><div class="detail">Construire un modèle de prévision depuis zéro demanderait trop de temps et de ressources</div></div>
+      <div class="pair-card"><div class="label">Un service existant</div><div class="detail">Déjà entraîné, déjà opérationnel, mais lequel, parmi tant d&rsquo;autres, répond vraiment au besoin</div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Le besoin</div>
+      <div class="detail">Une prévision fiable sur les prochains jours, pour le réseau de stations de Côte d&rsquo;Ivoire, utile aux chercheurs et aux agronomes pour planifier leurs activités de terrain</div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Déroulé</p>
+    <h2 class="big">De la veille à la mise à disposition</h2>
+    <ol class="roadmap">
+      <li><span class="num">1</span><span class="label">Organiser une veille technique et réglementaire</span></li>
+      <li><span class="num">2</span><span class="label">Présélectionner les services candidats</span></li>
+      <li><span class="num">3</span><span class="label">Comparer les finalistes par un benchmark chiffré</span></li>
+      <li><span class="num">4</span><span class="label">Choisir et configurer le service retenu</span></li>
+      <li><span class="num">5</span><span class="label">Intégrer les connecteurs dans le système d&rsquo;information</span></li>
+    </ol>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">Tout commence avant la première ligne de code : par une veille structurée.</p>
+    <p class="transition-next">Organiser la veille technique et réglementaire</p>
+  </section>
+
+  <!-- C6: temps de veille planifiés régulièrement (récurrence hebdomadaire) -->
+  <!-- C6: choix des outils d'agrégation cohérent avec les sources et le budget -->
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Organisation</p>
+    <h2 class="big">Avant le code, et chaque semaine ensuite</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Avant de coder</div><div class="detail">Lecture des documentations techniques et publications de référence, pour comprendre les technologies météo avant de faire des choix</div></div>
+      <div class="pair-card"><div class="label">1h chaque lundi</div><div class="detail">Rythme tenu pendant tout le stage, y compris les semaines de formation, pour ne pas perdre le fil</div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Feedly comme outil d&rsquo;agrégation</div>
+      <div class="detail">Gratuit, réunit les publications des sources choisies dans une seule interface. Cohérent ici : toutes les sources proposent un flux à suivre, un outil payant n&rsquo;était pas utile à ce stade</div>
+    </div>
+  </section>
+
+  <!-- C6: synthèses communiquées aux parties prenantes dans un format accessible -->
+  <!-- C6: informations partagées répondant à la thématique de veille choisie -->
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Partage</p>
+    <h2 class="big">Un fichier de veille, relié au code du projet</h2>
+    <div class="chip-grid">
+      <div class="chip">Date</div>
+      <div class="chip">Source</div>
+      <div class="chip">Auteur</div>
+      <div class="chip">Sujet</div>
+      <div class="chip">Apport pour le projet</div>
+    </div>
+    <div class="callout">
+      <div class="headline">Base des échanges avec le maître de stage et le climatologue</div>
+      <div class="detail">Chaque choix technique est relié à la lecture qui l&rsquo;a motivé. Document rédigé selon les règles d&rsquo;accessibilité : titres hiérarchisés pour les lecteurs d&rsquo;écran, texte alternatif sur chaque image, bon contraste, aucune information donnée par la couleur seule</div>
+    </div>
+  </section>
+
+  <!-- C6: sources et flux répondant aux critères de fiabilité -->
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Fiabilité des sources</p>
+    <h2 class="big">Une grille de lecture avant de retenir une source</h2>
+    <div class="chip-grid">
+      <div class="chip">Auteur identifié</div>
+      <div class="chip">Compétence et absence d&rsquo;intérêt personnel</div>
+      <div class="chip">Contenu daté, sourcé, bien écrit</div>
+      <div class="chip">Site ou document structuré</div>
+      <div class="chip">Accessibilité numérique privilégiée</div>
+      <div class="chip">Recoupée avec d&rsquo;autres sources fiables</div>
+    </div>
+    <div class="callout">
+      <div class="headline">Grille appliquée en continu, pas un audit documenté par source</div>
+      <div class="detail">Ces six critères filtrent chaque source avant qu&rsquo;elle entre dans le fichier de veille &mdash; une vérification systématique, pas une fiche d&rsquo;audit séparée par source</div>
+    </div>
+  </section>
+
+  <!-- C6: exemples réels de sources filtrées par la grille -->
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Fiabilité des sources</p>
+    <h2 class="big">Appliquée à deux sources réelles du fichier de veille</h2>
+    <div class="row">
+      <div class="pair-card">
+        <div class="label">GraphCast &middot; Science, 14 nov. 2023</div>
+        <div class="detail">Auteur identifié (DeepMind, laboratoire de recherche reconnu, sans intérêt personnel caché) &middot; revue à comité de lecture, DOI 10.1126/science.adi2336 &middot; daté précisément &middot; recoupé par Pangu-Weather (Nature, 05 juil. 2023) sur la même période</div>
+      </div>
+      <div class="pair-card">
+        <div class="label">Règlement IA européen &middot; EUR-Lex, 12 juil. 2024</div>
+        <div class="detail">Source officielle (institution européenne), structurée (numéro de règlement, Journal officiel) &middot; daté précisément &middot; recoupé par le Guide RGPD de la CNIL (janv. 2022) sur le même sujet de protection des données</div>
+      </div>
+    </div>
+    <p class="caption-line">Deux exemples parmi les sources réellement consultées, docs/veille_technique.md &mdash; la même grille est appliquée à chaque source du fichier</p>
+  </section>
+
+  <!-- C6: thématique de veille portant sur un outil et une réglementation mobilisés dans le projet -->
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Quatre sujets</p>
+    <h2 class="big">Une veille qui couvre tout le projet</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Modèles météo IA</div><div class="detail">Technologies comme Open-Meteo</div></div>
+      <div class="pair-card"><div class="label">Cadre réglementaire</div><div class="detail">Réglementation ivoirienne, RGPD, règlement européen sur l&rsquo;IA</div></div>
+      <div class="pair-card"><div class="label">Métriques de comparaison</div><div class="detail">Évaluer une prévision météo</div></div>
+      <div class="pair-card"><div class="label">Outils de machine learning</div><div class="detail">Pour le futur correcteur de biais</div></div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Sujet 1</p>
+    <h2 class="big">Modèles physiques et modèles IA</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Modèles classiques</div><div class="detail">Calculent la météo à partir des lois physiques de l&rsquo;atmosphère</div></div>
+      <div class="pair-card"><div class="label">Modèles IA récents</div><div class="detail">Résultats conséquents, parfois meilleurs sur certains points</div></div>
+    </div>
+    <div class="callout orange">
+      <div class="headline">Une limite importante</div>
+      <div class="detail">Ces modèles sont pensés pour de grandes zones géographiques : moins précis à l&rsquo;échelle d&rsquo;une seule station, surtout en climat tropical où la météo varie beaucoup d&rsquo;un endroit à un autre</div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Sujet 2</p>
+    <h2 class="big">Quel cadre réglementaire pour une aide à la décision IA</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Réglementation ivoirienne</div><div class="detail">Existe, mais difficile à consulter et à recouper de façon fiable</div></div>
+      <div class="pair-card"><div class="label">RGPD &amp; règlement IA européens</div><div class="detail">Cadre mieux connu et documenté, suivi directement depuis les textes officiels</div></div>
+    </div>
+    <div class="chip-grid">
+      <div class="chip">Risque minimal (aide agronomique)</div>
+      <div class="chip">Documenter données d&rsquo;entraînement et limites</div>
+    </div>
+    <p class="caption-line">Les données météo ne sont pas des données personnelles ici : elles restent regroupées au niveau de la station</p>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Veille · Sujets 3 et 4</p>
+    <h2 class="big">Des métriques à la future correction</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Combiner les métriques</div><div class="detail">Erreur moyenne, détection d&rsquo;un épisode de pluie, cohérence de l&rsquo;ordre des prévisions : aucune métrique seule ne suffit. Inspire directement la méthode de ce projet</div></div>
+      <div class="pair-card"><div class="label">Bibliothèques ML open source</div><div class="detail">Comparées selon leur adéquation au besoin. Choix orienté vers scikit-learn, stable et documentée, plutôt qu&rsquo;une solution que la taille du jeu de données ne justifiait pas</div></div>
+    </div>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">De la veille au choix : quelle source retenir pour le projet.</p>
+    <p class="transition-next">Analyser le besoin en fonctionnalités IA</p>
+  </section>
+
+  <!-- C7: expression de besoin reformulée, objectifs et contraintes du projet d'intégration -->
+  <section class="slide slide--light">
+    <p class="kicker">Besoin</p>
+    <h2 class="big">Un modèle vérifiable, pas une promesse marketing</h2>
+    <div class="callout">
+      <div class="headline">Reformulation</div>
+      <div class="detail">Identifier un service de prévision météo fondé sur un modèle vérifiable : mathématique classique ou IA, à condition qu&rsquo;il soit nommé, documenté et vérifiable, pour ne pas confondre un vrai service à modèle explicite avec une API générique qui revendiquerait l&rsquo;IA sans le prouver</div>
+    </div>
+    <div class="chip-grid">
+      <div class="chip">Couverture Afrique de l&rsquo;Ouest</div>
+      <div class="chip">Résolution à l&rsquo;échelle station</div>
+      <div class="chip">Coût compatible phase d&rsquo;étude</div>
+      <div class="chip">Format exploitable en Python</div>
+    </div>
+  </section>
+
+  <!-- C7: benchmark liste les services étudiés et les raisons de les écarter -->
+  <section class="slide slide--light">
+    <p class="kicker">Présélection</p>
+    <h2 class="big">Huit services étudiés, trois familles</h2>
+    <p class="service-category-title">Gratuit &middot; modèle IA nommé et documenté</p>
+    <div class="service-grid">
+      <div class="service-card tag-free-ai">
+        <div class="name">Open-Meteo</div>
+        <div class="verdict kept">Retenu pour le benchmark</div>
+        <div class="detail">Open source, sans clé. Agrège plusieurs modèles numériques mondiaux, historique décennal, prévision court terme. Modèles IA explicitement documentés</div>
+      </div>
+    </div>
+    <p class="service-category-title">Gratuit &middot; sans modèle IA nommé</p>
+    <div class="service-grid">
+      <div class="service-card tag-free">
+        <div class="name">CHIRPS</div>
+        <div class="verdict out">Écarté</div>
+        <div class="detail">Satellite + stations sol, adapté aux tropiques. Aucune prévision : seulement historique et données préliminaires</div>
+      </div>
+      <div class="service-card tag-free">
+        <div class="name">NASA POWER</div>
+        <div class="verdict out">Écarté</div>
+        <div class="detail">Réanalyse historique, décalage de plusieurs jours à semaines, résolution trop grossière : pas un service de prévision</div>
+      </div>
+      <div class="service-card tag-free">
+        <div class="name">OpenWeatherMap</div>
+        <div class="verdict out">Écarté</div>
+        <div class="detail">Prévisions à quelques jours, mais historique longue durée réservé aux plans payants ; quota gratuit trop restrictif</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- C7: benchmark liste les services étudiés et les raisons de les écarter -->
+  <!-- C7: démarche éco-responsable, en fonction des informations disponibles -->
+  <section class="slide slide--light">
+    <p class="kicker">Présélection</p>
+    <h2 class="big">Les services payants : un coût que l&rsquo;étude ne justifie pas</h2>
+    <div class="service-grid">
+      <div class="service-card tag-paid">
+        <div class="name">Tomorrow.io</div>
+        <div class="verdict out">Écarté</div>
+        <div class="detail">Radars, satellites, IoT, résolution temporelle très fine. Coût minimum élevé, historique insuffisant pour une modélisation long terme</div>
+      </div>
+      <div class="service-card tag-paid">
+        <div class="name">Visual Crossing</div>
+        <div class="verdict out">Écarté</div>
+        <div class="detail">Historique parmi les plus étendus, tarif accessible, mais résolution limitée dans les zones à faible densité de stations, dont l&rsquo;intérieur de la Côte d&rsquo;Ivoire</div>
+      </div>
+      <div class="service-card tag-paid">
+        <div class="name">WeatherAPI.com</div>
+        <div class="verdict compare">Conservé pour comparaison</div>
+        <div class="detail">Bon rapport qualité-prix, tier gratuit généreux, historique ~1 an. Pas de modèle IA nommé : conservé volontairement comme point de comparaison</div>
+      </div>
+      <div class="service-card tag-paid">
+        <div class="name">Meteomatics</div>
+        <div class="verdict out">Écarté</div>
+        <div class="detail">Résolution très élevée, historique réanalysé décennal, mais coût prohibitif et accès développeur gratuit très restreint</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- C7: conclusions délimitant les services répondant au besoin des autres, avec avantages/inconvénients -->
+  <section class="slide slide--light">
+    <p class="kicker">Présélection · Conclusion</p>
+    <h2 class="big">Deux finalistes pour un benchmark complet</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Open-Meteo</div><div class="detail">Seul service gratuit à exposer un modèle IA nommé et documenté</div></div>
+      <div class="pair-card"><div class="label">WeatherAPI</div><div class="detail">Modèle météo classique, sans revendication IA : gardé comme point de comparaison plutôt qu&rsquo;écarté</div></div>
+    </div>
+    <div class="callout orange">
+      <div class="headline">Éco-responsabilité : non traitée dans cette présélection</div>
+      <div class="detail">Le rapport ne documente pas ce critère service par service. Point à assumer honnêtement plutôt qu&rsquo;à improviser une réponse si le jury le demande</div>
+    </div>
+    <p class="caption-line">CHIRPS et NASA POWER écartés pour absence de prévision ; OpenWeatherMap pour son quota ; les services payants pour un coût récurrent injustifié à ce stade</p>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">Deux services retenus. Reste à les confronter à la réalité du terrain.</p>
+    <p class="transition-next">Méthodologie du benchmark</p>
+  </section>
+
+  <!-- C7: contraintes techniques et pré-requis pour chaque solution -->
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Méthode</p>
+    <h2 class="big">Chaque prévision face à la mesure réelle</h2>
+    <div class="callout">
+      <div class="headline">Mise en correspondance horaire</div>
+      <div class="detail">Chaque prévision horaire est comparée à la mesure réellement observée, à la même station, à la même heure</div>
+    </div>
+    <div class="row">
+      <div class="pair-card"><div class="label">Mesures de terrain</div><div class="detail">Contrôlées : une valeur physiquement impossible est invalidée sans supprimer la ligne</div></div>
+      <div class="pair-card"><div class="label">Prévisions des services</div><div class="detail">Volontairement non contrôlées, pour mesurer ce que chaque service produit réellement, aberrations comprises</div></div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Méthode</p>
+    <h2 class="big">Quatre variables, un jeu de métriques par variable</h2>
+    <div class="chip-grid">
+      <div class="chip">Température</div>
+      <div class="chip">Humidité relative</div>
+      <div class="chip">Précipitations</div>
+      <div class="chip">Vitesse du vent</div>
+    </div>
+    <div class="row">
+      <div class="pair-card"><div class="label">Biais, MAE, RMSE</div><div class="detail">Sur les quatre variables, complétées par la corrélation de rang de Spearman</div></div>
+      <div class="pair-card"><div class="label">POD, FAR, HSS, Brier</div><div class="detail">Traitement supplémentaire des précipitations, issu de la matrice de confusion</div></div>
+    </div>
+  </section>
+
+  <!-- C7: niveau d'adéquation du service pour chaque ensemble fonctionnel souhaité -->
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Méthode</p>
+    <h2 class="big">Trois étapes pour trancher</h2>
+    <ol class="roadmap">
+      <li><span class="num">1</span><span class="label">Score composite pondéré selon l&rsquo;importance agronomique</span></li>
+      <li><span class="num">2</span><span class="label">Test de Wilcoxon : l&rsquo;écart est-il réel ou dû au hasard</span></li>
+      <li><span class="num">3</span><span class="label">Analyse stratifiée : zone climatique et jour/nuit</span></li>
+    </ol>
+    <div class="weight-bar">
+      <div class="weight-seg" style="width:35%; background:var(--forest)"></div>
+      <div class="weight-seg" style="width:35%; background:var(--orange)"></div>
+      <div class="weight-seg" style="width:20%; background:var(--lime-deep)"></div>
+      <div class="weight-seg" style="width:10%; background:var(--forest-deep)"></div>
+    </div>
+    <div class="weight-legend">
+      <span><span class="dot" style="background:var(--forest)"></span>Température 35%</span>
+      <span><span class="dot" style="background:var(--orange)"></span>Humidité 35%</span>
+      <span><span class="dot" style="background:var(--lime-deep)"></span>Précipitations 20%</span>
+      <span><span class="dot" style="background:var(--forest-deep)"></span>Vent 10%</span>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Résultats</p>
+    <h2 class="big">Le cadre de l&rsquo;évaluation</h2>
+    <div class="stats">
+      <div class="stat"><span class="num">13</span><span class="cap">Stations évaluées</span></div>
+      <div class="stat"><span class="num">1</span><span class="cap">Station écartée</span></div>
+      <div class="stat"><span class="num forest">12</span><span class="cap">Stations retenues pour le benchmark</span></div>
+      <div class="stat"><span class="num forest">28</span><span class="cap">Jours d&rsquo;observation</span></div>
+    </div>
+    <p class="caption-line">Du 28 mars au 24 avril 2026 &middot; station écartée pour un taux de complétude de 58,44%, insuffisant pour une référence fiable</p>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Résultats</p>
+    <h2 class="big">Température : Open-Meteo nettement plus précis</h2>
+    <div class="metric-block">
+      <p class="metric-title">MAE (°C, plus bas = mieux)</p>
+      <div class="bar-row"><span class="bar-name">Open-Meteo</span><div class="bar-track"><div class="bar-fill forest" style="width:66%"><span class="bar-value">1,81°C</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">WeatherAPI</span><div class="bar-track"><div class="bar-fill orange" style="width:87%"><span class="bar-value">2,39°C</span></div></div></div>
+    </div>
+    <div class="metric-block">
+      <p class="metric-title">RMSE (°C, plus bas = mieux)</p>
+      <div class="bar-row"><span class="bar-name">Open-Meteo</span><div class="bar-track"><div class="bar-fill forest" style="width:55%"><span class="bar-value">1,89°C</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">WeatherAPI</span><div class="bar-track"><div class="bar-fill orange" style="width:87%"><span class="bar-value">2,98°C</span></div></div></div>
+    </div>
+    <div class="callout orange">
+      <div class="headline">Spearman 0,88 contre 0,78, et des biais localisés chez WeatherAPI</div>
+      <div class="detail">Sous-estimation systématique de 2,33°C dans une station du nord-ouest, surestimation de 2,01°C dans une station du sud-est : des écarts qui se répètent dans le temps</div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Résultats</p>
+    <h2 class="big">Humidité : l&rsquo;écart se creuse encore</h2>
+    <div class="metric-block">
+      <p class="metric-title">Biais moyen (points de %, plus bas = mieux)</p>
+      <div class="bar-row"><span class="bar-name">Open-Meteo</span><div class="bar-track"><div class="bar-fill forest" style="width:62%"><span class="bar-value">9,16 pts</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">WeatherAPI</span><div class="bar-track"><div class="bar-fill orange" style="width:87%"><span class="bar-value">12,97 pts</span></div></div></div>
+    </div>
+    <div class="callout orange">
+      <div class="headline">Certaines stations WeatherAPI dépassent 18 à 20 points d&rsquo;erreur</div>
+      <div class="detail">18,12 points dans une station du sud-est, 20,85 points dans une station du centre-nord : une prévision inutilisable à ces endroits précis. WeatherAPI se dégrade en plus la nuit (13,89% contre 12,13% de jour), quand Open-Meteo reste stable</div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Résultats</p>
+    <h2 class="big">Précipitations : les deux services échouent</h2>
+    <div class="stats">
+      <div class="stat"><span class="num forest">0,38</span><span class="cap">POD Open-Meteo</span></div>
+      <div class="stat"><span class="num">0,33</span><span class="cap">POD WeatherAPI</span></div>
+      <div class="stat"><span class="num forest">0,92</span><span class="cap">FAR Open-Meteo</span></div>
+      <div class="stat"><span class="num">0,93</span><span class="cap">FAR WeatherAPI</span></div>
+      <div class="stat"><span class="num forest">0,06</span><span class="cap">HSS Open-Meteo</span></div>
+      <div class="stat"><span class="num">0,05</span><span class="cap">HSS WeatherAPI</span></div>
+      <div class="stat"><span class="num">~0,25</span><span class="cap">Score de Brier, les deux</span></div>
+    </div>
+    <div class="callout orange">
+      <div class="headline">Une détection qui ne fait pas mieux que le hasard</div>
+      <div class="detail">Un peu plus d&rsquo;un tiers des épisodes pluvieux détectés, environ neuf alertes sur dix qui ne se réalisent pas. Aucun des deux services ne peut servir de base à une décision agronomique liée à la pluie, dans son état actuel</div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Résultats</p>
+    <h2 class="big">Vent : sur-estimation systématique</h2>
+    <div class="metric-block">
+      <p class="metric-title">Biais moyen (m/s, plus bas = mieux)</p>
+      <div class="bar-row"><span class="bar-name">Open-Meteo</span><div class="bar-track"><div class="bar-fill forest" style="width:82%"><span class="bar-value">+6,0 m/s</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">WeatherAPI</span><div class="bar-track"><div class="bar-fill orange" style="width:87%"><span class="bar-value">+6,4 m/s</span></div></div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="num forest">0,32</span><span class="cap">Spearman Open-Meteo</span></div>
+      <div class="stat"><span class="num">0,15</span><span class="cap">Spearman WeatherAPI</span></div>
+    </div>
+    <p class="caption-line">Corrélation quasiment nulle pour WeatherAPI dans une station de la zone centre</p>
+  </section>
+
+  <!-- C7: niveau d'adéquation détaillé, synthèse du benchmark -->
+  <section class="slide slide--light">
+    <p class="kicker">Benchmark · Score final</p>
+    <h2 class="big">Un score composite deux fois supérieur</h2>
+    <div class="stats">
+      <div class="stat"><span class="num forest">0,326</span><span class="cap">Open-Meteo</span></div>
+      <div class="stat"><span class="num">0,166</span><span class="cap">WeatherAPI</span></div>
+    </div>
+    <div class="metric-block">
+      <p class="metric-title">Détail par variable la plus pondérée</p>
+      <div class="bar-row"><span class="bar-name">Temp. OM</span><div class="bar-track"><div class="bar-fill forest" style="width:87%"><span class="bar-value">0,398</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">Temp. WA</span><div class="bar-track"><div class="bar-fill orange" style="width:44%"><span class="bar-value">0,202</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">Humid. OM</span><div class="bar-track"><div class="bar-fill forest" style="width:87%"><span class="bar-value">0,389</span></div></div></div>
+      <div class="bar-row"><span class="bar-name">Humid. WA</span><div class="bar-track"><div class="bar-fill orange" style="width:30%"><span class="bar-value">0,136</span></div></div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Écart confirmé par le test de Wilcoxon (p &lt; 0,05) sur les quatre variables</div>
+      <div class="detail">Un score honnête sur ses propres limites : 0,326 sur une échelle allant jusqu&rsquo;à 1 signifie que même le service recommandé reste loin d&rsquo;un niveau de fiabilité pleinement opérationnel</div>
+    </div>
+  </section>
+
+  <!-- C7: conclusions délimitant clairement les services répondant au besoin, avantages et inconvénients -->
+  <section class="slide slide--light">
+    <p class="kicker">Choix</p>
+    <h2 class="big">Open-Meteo, avec un usage précis plutôt que global</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Température</div><div class="detail">Utilisable, MAE ~1,8°C, sauf quelques stations du centre et du nord au-delà de 2°C</div></div>
+      <div class="pair-card"><div class="label">Humidité</div><div class="detail">Utilisable avec prudence dans certaines zones et la nuit</div></div>
+      <div class="pair-card"><div class="label">Précipitations</div><div class="detail">Non fiable chez aucun des deux services testés</div></div>
+      <div class="pair-card"><div class="label">Vent</div><div class="detail">Non fiable chez aucun des deux services testés</div></div>
+    </div>
+    <p class="caption-line">Pluie et vent ne doivent pas servir de base à une décision tant qu&rsquo;une autre source (radar, satellite) n&rsquo;aura pas été évaluée séparément</p>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">Un service sélectionné n&rsquo;est utile que correctement configuré.</p>
+    <p class="transition-next">Configuration technique d&rsquo;Open-Meteo</p>
+  </section>
+
+  <!-- C8: service accessible, avec authentification -->
+  <!-- C8: service configuré correctement, répond aux besoins fonctionnels et contraintes techniques -->
+  <section class="slide slide--light">
+    <p class="kicker">Configuration</p>
+    <h2 class="big">Un modèle nommé plutôt qu&rsquo;un mode automatique</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Mode automatique écarté</div><div class="detail">Sélectionne un modèle sans le nommer</div></div>
+      <div class="pair-card"><div class="label">Paramètre explicite retenu</div><div class="detail">Cible le modèle IA identifié pendant la veille : AIFS</div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Traçabilité</div>
+      <div class="detail">Ce choix est documenté dans le code et dans la documentation technique du projet, pour que toute personne reprenant le projet puisse vérifier quel modèle est réellement interrogé. Aucune clé d&rsquo;authentification n&rsquo;est requise pour accéder au service</div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Configuration</p>
+    <h2 class="big">Un horizon utile, pas un horizon maximal</h2>
+    <div class="stats">
+      <div class="stat"><span class="num forest">3</span><span class="cap">Jours de prévision exposés (J0 à J+3)</span></div>
+      <div class="stat"><span class="num">7</span><span class="cap">Jours demandés à l&rsquo;API, la limite maximale</span></div>
+    </div>
+    <p class="caption-line">Au-delà de J+3, une prévision perd rapidement en fiabilité et n&rsquo;apporte plus grand-chose à une décision agronomique concrète</p>
+    <div class="row">
+      <div class="pair-card"><div class="label">Pas de temps horaire</div><div class="detail">Correspond à la granularité des mesures collectées par les stations au sol</div></div>
+      <div class="pair-card"><div class="label">Fuseau horaire automatique</div><div class="detail">Chaque station reçoit ses prévisions dans son propre fuseau local, sans conversion manuelle</div></div>
+    </div>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Configuration</p>
+    <h2 class="big">Les variables demandées</h2>
+    <p class="code-label">Horaire</p>
+    <div class="chip-grid">
+      <div class="chip">Température</div>
+      <div class="chip">Humidité relative</div>
+      <div class="chip">Précipitations</div>
+      <div class="chip">Vitesse du vent</div>
+      <div class="chip">Probabilité de précipitation</div>
+    </div>
+    <p class="code-label" style="margin-top:1.9rem;">Journalier</p>
+    <div class="chip-grid">
+      <div class="chip">Température max / min</div>
+      <div class="chip">Somme des précipitations</div>
+      <div class="chip">Vitesse maximale du vent</div>
+      <div class="chip">Indice UV maximal</div>
+    </div>
+  </section>
+
+  <!-- C8: documentation des dépendances et interconnexions avec d'autres solutions -->
+  <section class="slide slide--light">
+    <p class="kicker">Intégration</p>
+    <h2 class="big">Deux couches, exploratoire puis opérationnelle</h2>
+    <div class="flow">
+      <span class="step">Référentiel stations</span><span class="arrow">&#8594;</span>
+      <span class="step">URL par station</span><span class="arrow">&#8594;</span>
+      <span class="step">JSON</span><span class="arrow">&#8594;</span>
+      <span class="step">Tables horaire / journalière</span><span class="arrow">&#8594;</span>
+      <span class="step">Export CSV</span>
+    </div>
+    <p class="caption-line">Couche exploratoire : deux carnets Jupyter (Open-Meteo, WeatherAPI), colonnes renommées en français, point de rosée calculé, indicateur de pluie par seuil</p>
+    <div class="row" style="margin-top:1.9rem;">
+      <div class="pair-card"><div class="label">Stockage côté client</div><div class="detail">L&rsquo;interface réagit aux filtres sans relancer un appel réseau</div></div>
+      <div class="pair-card"><div class="label">Callbacks réactifs</div><div class="detail">Mise à jour automatique de l&rsquo;affichage dès qu&rsquo;un filtre change</div></div>
+      <div class="pair-card"><div class="label">Vues multiples</div><div class="detail">Prévisions, historique terrain, modèle IA (Framework Dash)</div></div>
+    </div>
+  </section>
+
+  <!-- C8: documentation des accès, procédures d'installation et de test, données impliquées -->
+  <!-- C8: documentation communiquée dans un format accessible -->
+  <section class="slide slide--light">
+    <p class="kicker">Documentation</p>
+    <h2 class="big">Respect des spécifications et documentation suivie</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Couverture</div><div class="detail">Ensemble du territoire ivoirien, résolution de 1 à 11 km selon la zone</div></div>
+      <div class="pair-card"><div class="label">Accès</div><div class="detail">Gratuit, sans engagement, sans clé API : aucun risque lié à l&rsquo;expiration d&rsquo;une clé ou d&rsquo;un quota</div></div>
+      <div class="pair-card"><div class="label">Format</div><div class="detail">JSON structuré, directement exploitable par les bibliothèques du projet</div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Documentation officielle suivie en continu</div>
+      <div class="detail">Codes des variables, options de fuseau horaire, limites d&rsquo;horizon, modèles disponibles. Le choix du modèle IA est tracé par un commentaire dans le code et dans la documentation interne, qui décrit aussi l&rsquo;installation des dépendances et la configuration des variables d&rsquo;environnement. Même discipline d&rsquo;accessibilité que pour le fichier de veille</div>
+    </div>
+  </section>
+
+  <!-- C8: monitorage disponible du service, opérationnel -->
+  <section class="slide slide--light">
+    <p class="kicker">Résilience</p>
+    <h2 class="big">Détecter et gérer l&rsquo;indisponibilité d&rsquo;Open-Meteo</h2>
+    <div class="flow">
+      <span class="step">Appel Open-Meteo</span><span class="arrow">&#8594;</span>
+      <span class="step">Échec réseau / erreur serveur</span><span class="arrow">&#8594;</span>
+      <span class="step">Nouvelle tentative (jusqu&rsquo;à 3x, 5s d&rsquo;attente)</span><span class="arrow">&#8594;</span>
+      <span class="step">Journalisation</span>
+    </div>
+    <p class="caption-line">Mécanisme basé sur la bibliothèque Tenacity, sans intervention humaine &mdash; c&rsquo;est ce qui détecte et absorbe une indisponibilité ponctuelle d&rsquo;Open-Meteo au moment de la collecte</p>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Mise à disposition</p>
+    <h2 class="big">Conteneurs, intégration continue, et une limite assumée</h2>
+    <div class="flow">
+      <span class="step">Build image</span><span class="arrow">&#8594;</span>
+      <span class="step">Conteneur réel, test de réponse</span><span class="arrow">&#8594;</span>
+      <span class="step">Scan vulnérabilités</span><span class="arrow">&#8594;</span>
+      <span class="step">Déploiement selon la branche</span>
+    </div>
+    <div class="callout orange">
+      <div class="headline">Pas encore mis en ligne, une décision de l&rsquo;entreprise</div>
+      <div class="detail">L&rsquo;application fonctionne entièrement en local, tous les services communiquent entre eux. L&rsquo;entreprise a demandé la remise de l&rsquo;application sans autoriser son déploiement, et le temps disponible en fin de stage était trop court. Prévu si déployé : hébergement sur Render, surveillance externe avec UptimeRobot</div>
+    </div>
+  </section>
+
+  <section class="slide slide--demo">
+    <p class="kicker">Rappel · Détaillé à l&rsquo;Épreuve 3, à l&rsquo;instant</p>
+    <h2 class="demo-title">Un second service, interne, pour corriger la prévision</h2>
+    <p class="sub" style="margin-top:1rem;">Open-Meteo reste la meilleure source, mais son erreur moyenne de 1,81°C reste significative pour une décision agronomique</p>
+    <table class="compare-table">
+      <tr><th>Algorithme</th><th>MAE test</th><th>RMSE test</th></tr>
+      <tr class="win"><td>GradientBoosting</td><td>1,463°C</td><td>2,019°C</td></tr>
+      <tr><td>RandomForest</td><td>1,477°C</td><td>2,039°C</td></tr>
+      <tr><td>Ridge</td><td>1,538°C</td><td>2,170°C</td></tr>
+      <tr><td>LinearRegression</td><td>1,538°C</td><td>2,170°C</td></tr>
+    </table>
+    <div class="stats">
+      <div class="stat"><span class="num forest">7 958</span><span class="cap">Paires prévision / mesure, 12 stations</span></div>
+      <div class="stat"><span class="num forest">80 / 20</span><span class="cap">Découpage temporel entraînement / test</span></div>
+      <div class="stat"><span class="num forest">15,2%</span><span class="cap">Gain vs prévision brute</span></div>
+    </div>
+    <p class="caption-line">Modèle exporté seulement s&rsquo;il fait mieux que l&rsquo;absence de correction. Le détail complet, c&rsquo;est ce que vous venez de voir à l&rsquo;Épreuve 3</p>
+  </section>
+
+  <section class="slide slide--light">
+    <p class="kicker">Bilan</p>
+    <h2 class="big">Un choix rigoureux, puis une correction propre au terrain</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Choisir</div><div class="detail">Parmi huit services, celui qui s&rsquo;appuie sur un modèle IA réellement vérifiable, et qui se révèle le plus fiable pour le contexte ivoirien, chiffres à l&rsquo;appui</div></div>
+      <div class="pair-card"><div class="label">Corriger</div><div class="detail">À partir des mesures de terrain du centre, resserrer encore l&rsquo;écart entre la prévision et la réalité observée</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="num">1,725°C</span><span class="cap">Erreur brute</span></div>
+      <div class="stat"><span class="num forest">1,463°C</span><span class="cap">Erreur corrigée</span></div>
+    </div>
+    <p class="caption-line">Un gain réel de 15,2%, obtenu honnêtement sur un jeu de données encore limité à une seule saison</p>
+    <p class="caption-line">Documentation de veille et scripts versionnés sur github.com/h3joseph/certification-</p>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">Une source choisie, réglée, corrigée : reste à prouver qu&rsquo;elle continue de tenir ses promesses, jour après jour, sans surveillance humaine constante.</p>
+    <p class="transition-next"><a href="soutenance-e5.html" style="color:var(--lime); text-decoration:underline;">Épreuve 5</a> · Supervision et résolution d&rsquo;incidents</p>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var progress = document.getElementById('progress');
+  var pageInput = document.getElementById('pageInput');
+  var totalPages = document.getElementById('totalPages');
+  var total = slides.length;
+  var current = 0;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  pageInput.max = total;
+  totalPages.textContent = total;
+
+  function update(index){
+    current = Math.max(0, Math.min(total - 1, index));
+    if (document.activeElement !== pageInput){ pageInput.value = current + 1; }
+    progress.style.width = (current / (total - 1)) * 100 + '%';
+  }
+
+  function goTo(index){
+    index = Math.max(0, Math.min(total - 1, index));
+    slides[index].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  function commitPageJump(){
+    var n = parseInt(pageInput.value, 10);
+    if (!isNaN(n)){ goTo(n - 1); }
+    pageInput.value = current + 1;
+  }
+
+  pageInput.addEventListener('change', commitPageJump);
+  pageInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); commitPageJump(); pageInput.blur(); }
+    e.stopPropagation();
+  });
+
+  if ('IntersectionObserver' in window){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting && entry.intersectionRatio > 0.6){
+          update(slides.indexOf(entry.target));
+          entry.target.classList.add('is-in');
+        } else {
+          entry.target.classList.remove('is-in');
+        }
+      });
+    }, { threshold: [0.6] });
+    slides.forEach(function(s){ observer.observe(s); });
+  } else {
+    slides.forEach(function(s){ s.classList.add('is-in'); });
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', function(){ goTo(current + 1); });
+  document.getElementById('prevBtn').addEventListener('click', function(){ goTo(current - 1); });
+
+  window.addEventListener('keydown', function(e){
+    if (['ArrowRight','ArrowDown','PageDown',' '].indexOf(e.key) !== -1){
+      e.preventDefault(); goTo(current + 1);
+    } else if (['ArrowLeft','ArrowUp','PageUp'].indexOf(e.key) !== -1){
+      e.preventDefault(); goTo(current - 1);
+    }
+  });
+
+  update(0);
+})();
+
+(function(){
+  var switchEl = document.getElementById('epreuveSwitch');
+  var switchBtn = document.getElementById('switchBtn');
+  if (!switchEl || !switchBtn) return;
+  function closeSwitch(){
+    switchEl.classList.remove('is-open');
+    switchBtn.setAttribute('aria-expanded', 'false');
+  }
+  switchBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = switchEl.classList.toggle('is-open');
+    switchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', function(e){
+    if (!switchEl.contains(e.target)){ closeSwitch(); }
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){ closeSwitch(); }
+  });
+})();
+
+(function(){
+  var DURATION_MIN = 15;
+  var timerEl = document.getElementById('timer');
+  var display = document.getElementById('timerDisplay');
+  if (!timerEl || !display) return;
+  var remaining = DURATION_MIN * 60;
+  var running = false;
+  var intervalId = null;
+
+  function format(s){
+    var neg = s < 0;
+    var abs = Math.abs(s);
+    var m = Math.floor(abs / 60);
+    var sec = abs % 60;
+    return (neg ? '-' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function render(){
+    display.textContent = format(remaining);
+    timerEl.classList.toggle('is-warning', remaining <= 300 && remaining > 60);
+    timerEl.classList.toggle('is-danger', remaining <= 60);
+  }
+
+  function tick(){
+    remaining -= 1;
+    render();
+  }
+
+  function start(){
+    if (running) return;
+    running = true;
+    timerEl.classList.add('is-running');
+    intervalId = setInterval(tick, 1000);
+  }
+
+  function pause(){
+    running = false;
+    timerEl.classList.remove('is-running');
+    clearInterval(intervalId);
+  }
+
+  function reset(){
+    pause();
+    remaining = DURATION_MIN * 60;
+    render();
+  }
+
+  function toggle(){ running ? pause() : start(); }
+
+  timerEl.addEventListener('click', toggle);
+  timerEl.addEventListener('dblclick', function(e){ e.stopPropagation(); reset(); });
+  timerEl.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+    else if (e.key === 'r' || e.key === 'R'){ reset(); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

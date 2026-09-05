@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surveillance applicative et résolution des incidents &middot; CIFOR ICRAF</title>
+<meta name="description" content="Support de projection pour la soutenance de l'Épreuve 5, RNCP 37827.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#0A4F3C;
+    --forest-deep:#073328;
+    --lime:#8DC63F;
+    --lime-deep:#5C8A2B;
+    --orange:#F26522;
+    --orange-deep:#C94E14;
+    --alert:#C6392B;
+    --bg:#F9F9F9;
+    --paper:#FFFFFF;
+    --ink:#333333;
+    --ink-soft:#5B5F5C;
+    --line:#E3E1DA;
+    --code-bg:#0D2B22;
+    --code-ink:#E9F3EC;
+    --code-line:#1B4436;
+    --font-display:"Fraunces", Georgia, "Times New Roman", serif;
+    --font-body:"Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono:"JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{ font-family:var(--font-display); margin:0; text-wrap:balance; }
+  p{ margin:0; }
+  :focus-visible{ outline:2px solid var(--lime); outline-offset:3px; }
+
+  /* Deck shell */
+  .deck{
+    height:100vh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+  }
+  .slide{
+    min-height:100vh;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:5vh 6vw;
+    position:relative;
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .55s ease, transform .55s ease;
+  }
+  .slide.is-in{ opacity:1; transform:translateY(0); }
+  .slide--light{ background:var(--bg); color:var(--ink); }
+  .slide--dark{ background:var(--forest-deep); color:#EAF3EE; }
+  .slide--dark h1, .slide--dark h2{ color:#fff; }
+
+  .kicker{
+    font-family:var(--font-mono);
+    font-size:clamp(0.75rem,1.1vw,0.95rem);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--orange);
+    margin-bottom:1.4rem;
+  }
+  .slide--dark .kicker{ color:var(--lime); }
+
+  h1.big{
+    font-size:clamp(2.6rem,6.4vw,5rem);
+    font-weight:900;
+    line-height:1.05;
+    max-width:16ch;
+  }
+  h2.big{
+    font-size:clamp(2.1rem,5vw,3.6rem);
+    font-weight:700;
+    line-height:1.08;
+    max-width:18ch;
+    color:var(--forest-deep);
+  }
+  .sub{
+    font-size:clamp(1.05rem,1.9vw,1.5rem);
+    color:var(--ink-soft);
+    max-width:42ch;
+    margin-top:1.3rem;
+    line-height:1.5;
+  }
+  .slide--dark .sub{ color:#CFE4D8; }
+
+  .signature{
+    margin-top:3.2rem;
+    font-family:var(--font-mono);
+    font-size:clamp(0.85rem,1.2vw,1rem);
+    color:#CFE4D8;
+    letter-spacing:0.04em;
+  }
+
+  /* Transition and demo slides */
+  .slide--transition, .slide--demo{ background:var(--forest-deep); }
+  /* Silhouette discrète de cacaoyers en pied de diapo (contexte agricole CIFOR-ICRAF) */
+  .slide--dark, .slide--transition, .slide--demo{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='130' viewBox='0 0 220 130'%3E%3Cg fill='%230A4F3C' fill-opacity='0.4'%3E%3Cpath d='M40 130 L40 70 Q40 55 46 50 L46 130 Z'/%3E%3Cpath d='M10 55 Q0 30 25 20 Q35 5 55 15 Q75 5 85 25 Q100 30 90 50 Q95 65 75 68 Q60 78 45 68 Q25 75 15 62 Q0 65 10 55 Z'/%3E%3Cellipse cx='35' cy='85' rx='5' ry='11' transform='rotate(-15 35 85)'/%3E%3Cellipse cx='50' cy='95' rx='5' ry='12' transform='rotate(10 50 95)'/%3E%3Cellipse cx='38' cy='108' rx='4.5' ry='10' transform='rotate(-5 38 108)'/%3E%3C/g%3E%3Cg fill='%230A4F3C' fill-opacity='0.25'%3E%3Cpath d='M150 130 L150 90 Q150 80 154 76 L154 130 Z'/%3E%3Cpath d='M130 78 Q122 60 140 52 Q150 40 165 50 Q180 45 178 62 Q186 72 172 78 Q160 86 148 78 Q138 86 130 78 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat:repeat-x;
+    background-position:bottom left;
+    background-size:220px 130px;
+  }
+  .transition-line{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(1.6rem,3.4vw,2.5rem);
+    color:#fff;
+    max-width:22ch;
+    line-height:1.3;
+  }
+  .transition-next{
+    margin-top:2.2rem;
+    font-family:var(--font-mono);
+    font-size:clamp(0.85rem,1.1vw,1rem);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--lime);
+  }
+  .demo-title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.6rem,3.4vw,2.4rem);
+    color:#fff;
+  }
+  .demo-list{
+    list-style:none;
+    padding:0;
+    margin:1.9rem 0 0;
+    display:flex;
+    flex-direction:column;
+    gap:0.8rem;
+    width:100%;
+    max-width:520px;
+  }
+  .demo-list li{
+    font-family:var(--font-mono);
+    font-size:clamp(0.95rem,1.6vw,1.1rem);
+    color:#EAF3EE;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:6px;
+    padding:0.75rem 1.1rem;
+    text-align:left;
+  }
+
+  /* Roadmap slide */
+  .roadmap{
+    list-style:none;
+    padding:0;
+    margin:2.4rem 0 0;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    width:100%;
+    max-width:640px;
+  }
+  .roadmap li{
+    display:flex;
+    align-items:center;
+    gap:1.1rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1rem 1.3rem;
+    text-align:left;
+  }
+  .roadmap .num{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:1.1rem;
+    color:#fff;
+    background:var(--forest);
+    width:2.4rem;
+    height:2.4rem;
+    flex:0 0 auto;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .roadmap span.label{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.05rem,1.9vw,1.35rem);
+    color:var(--forest-deep);
+  }
+
+  /* Content slide layout helpers */
+  .row{ display:flex; flex-wrap:wrap; gap:1.4rem; justify-content:center; margin-top:2.2rem; }
+
+  .pair-card{
+    flex:1 1 220px;
+    max-width:320px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-top:5px solid var(--forest);
+    border-radius:8px;
+    padding:1.6rem 1.4rem;
+  }
+  .pair-card:nth-child(2){ border-top-color:var(--orange); }
+  .pair-card:nth-child(3){ border-top-color:var(--lime-deep); }
+  .pair-card:nth-child(4){ border-top-color:var(--forest-deep); }
+  .pair-card .label{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.1rem,2.2vw,1.4rem);
+    color:var(--forest-deep);
+    margin-bottom:0.4rem;
+  }
+  .pair-card .detail{ color:var(--ink-soft); font-size:0.95rem; }
+
+  .flow{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:0.6rem;
+    margin-top:2.4rem;
+  }
+  .flow .step{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:clamp(0.9rem,1.5vw,1.15rem);
+    background:var(--forest);
+    color:#fff;
+    padding:0.75rem 1.2rem;
+    border-radius:999px;
+  }
+  .flow .arrow{ color:var(--lime-deep); font-size:1.4rem; }
+
+  .stats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:2.2rem;
+    justify-content:center;
+    margin-top:2.4rem;
+  }
+  .stat{ text-align:center; }
+  .stat .num{
+    display:block;
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:clamp(2.2rem,5.2vw,3.6rem);
+    color:var(--orange-deep);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .num.forest{ color:var(--forest); }
+  .stat .cap{
+    display:block;
+    margin-top:0.5rem;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+
+  .big-compare{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:2rem;
+    margin-top:1.2rem;
+    flex-wrap:wrap;
+  }
+  .big-compare .arrow{ font-size:2.6rem; color:var(--lime-deep); }
+
+  .chip-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:0.9rem;
+    margin-top:2.4rem;
+    width:100%;
+    max-width:760px;
+  }
+  .chip-grid .chip{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1rem 0.6rem;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.95rem;
+    color:var(--forest-deep);
+  }
+
+  .schema-wrap{
+    position:relative;
+    width:100%;
+    max-width:760px;
+    padding:0 30px;
+    margin:1.4rem auto 0;
+  }
+  .schema-legend{
+    margin-top:1.6rem;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    line-height:1.5;
+    color:var(--ink-soft);
+    max-width:640px;
+  }
+  .schema-legend .dot{
+    display:inline-block;
+    width:0.6em;
+    height:0.6em;
+    border-radius:50%;
+    margin-right:0.35em;
+  }
+  .schema-links{
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    overflow:visible;
+  }
+  .schema-link-label{
+    font-family:var(--font-mono);
+    font-size:13px;
+    font-weight:700;
+  }
+  .schema-grid{
+    position:relative;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-areas:
+      "station . source"
+      "prevision reelle score";
+    gap:3.4rem 0.8rem;
+    text-align:left;
+  }
+  .schema-card[data-entity="STATION"]{ grid-area:station; }
+  .schema-card[data-entity="SOURCE"]{ grid-area:source; }
+  .schema-card[data-entity="MESURE_PREVISION"]{ grid-area:prevision; }
+  .schema-card[data-entity="MESURE_REELLE"]{ grid-area:reelle; }
+  .schema-card[data-entity="SCORE"]{ grid-area:score; }
+  @media (max-width:760px){
+    .schema-grid{
+      grid-template-columns:1fr;
+      grid-template-areas:
+        "station"
+        "source"
+        "prevision"
+        "reelle"
+        "score";
+    }
+  }
+  .schema-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .schema-head{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:0.76rem;
+    color:#fff;
+    padding:0.32rem 0.6rem;
+    letter-spacing:0.03em;
+  }
+  .schema-table{ width:100%; border-collapse:collapse; font-family:var(--font-mono); font-size:0.58rem; }
+  .schema-table td{ padding:0.14rem 0.5rem; border-top:1px solid var(--line); color:var(--ink-soft); white-space:nowrap; line-height:1.3; }
+  .schema-table tr:first-child td{ border-top:none; }
+  .schema-table td:first-child{ color:var(--ink); }
+  .schema-table tr.pk td{ color:var(--forest-deep); font-weight:700; }
+  .schema-table tr.fk td:first-child{ color:var(--ink); font-weight:600; }
+  .schema-table td.badge{ text-align:right; font-size:0.5rem; font-weight:700; letter-spacing:0.02em; }
+  .schema-table tr.pk td.badge{ color:var(--orange-deep); }
+  .schema-table tr.fk td.badge{ color:var(--lime-deep); }
+  .entity-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.7rem;
+    justify-content:center;
+    margin-top:2.2rem;
+  }
+  .entity-grid .entity{
+    font-family:var(--font-mono);
+    font-size:0.95rem;
+    background:var(--forest-deep);
+    color:#DCEBE3;
+    padding:0.5rem 1rem;
+    border-radius:6px;
+  }
+
+  .callout{
+    margin-top:2.2rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:6px solid var(--lime-deep);
+    border-radius:0 8px 8px 0;
+    padding:1.3rem 1.7rem;
+    max-width:640px;
+    text-align:left;
+  }
+  .callout .headline{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.05rem,1.9vw,1.3rem);
+    color:var(--forest-deep);
+  }
+  .callout .detail{ margin-top:0.45rem; color:var(--ink-soft); font-size:0.95rem; }
+
+  pre.code{
+    text-align:left;
+    background:var(--code-bg);
+    color:var(--code-ink);
+    font-family:var(--font-mono);
+    font-size:clamp(0.8rem,1.2vw,0.98rem);
+    line-height:1.65;
+    padding:1.2rem 1.4rem;
+    border-radius:8px;
+    border:1px solid var(--code-line);
+    max-width:600px;
+    width:100%;
+    margin:1.8rem auto 0;
+    overflow-x:auto;
+  }
+  .kw{ color:var(--lime); }
+  .fn{ color:#F2C879; }
+  .str{ color:#8FD1B8; }
+
+  .code-label{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--forest-deep);
+    text-align:left;
+    width:100%;
+    max-width:600px;
+    margin:0 auto;
+  }
+  .caption-line{
+    margin-top:1.1rem;
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+
+  /* Controls */
+  .progress{
+    position:fixed;
+    top:0; left:0;
+    height:4px;
+    background:var(--lime);
+    width:0%;
+    z-index:80;
+    transition:width 0.25s ease;
+  }
+  .counter{
+    position:fixed;
+    right:1.4rem;
+    bottom:1.3rem;
+    display:flex;
+    align-items:center;
+    gap:0.3rem;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.35rem 0.8rem;
+    z-index:80;
+  }
+  .counter input{
+    width:2.4em;
+    border:none;
+    background:transparent;
+    color:var(--forest-deep);
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    font-weight:700;
+    text-align:right;
+    padding:0;
+    -moz-appearance:textfield;
+  }
+  .counter input::-webkit-outer-spin-button,
+  .counter input::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  .counter input:focus{ outline:none; }
+  .nav-btn{
+    position:fixed;
+    bottom:1.2rem;
+    width:2.6rem;
+    height:2.6rem;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--forest-deep);
+    font-size:1.2rem;
+    line-height:1;
+    cursor:pointer;
+    z-index:80;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .nav-btn:hover{ background:var(--forest); color:#fff; }
+  .nav-prev{ left:1.2rem; }
+  .nav-next{ left:4.2rem; }
+
+  .timer{
+    position:fixed;
+    top:1.2rem;
+    right:1.4rem;
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+    font-family:var(--font-mono);
+    font-size:0.9rem;
+    font-weight:700;
+    color:var(--forest-deep);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.4rem 0.9rem;
+    z-index:90;
+    cursor:pointer;
+    user-select:none;
+  }
+  .timer-dot{ width:0.5rem; height:0.5rem; border-radius:50%; background:var(--ink-soft); flex:none; }
+  .timer.is-running .timer-dot{ background:var(--lime); animation:timer-pulse 1.2s infinite; }
+  .timer.is-warning{ color:var(--orange-deep); border-color:var(--orange); }
+  .timer.is-warning .timer-dot{ background:var(--orange); }
+  .timer.is-danger{ color:#fff; background:var(--orange-deep); border-color:var(--orange-deep); }
+  .timer.is-danger .timer-dot{ background:#fff; }
+  @keyframes timer-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  .switch{
+    position:fixed;
+    top:1.2rem;
+    left:1.2rem;
+    z-index:95;
+  }
+  .switch-btn{
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    font-weight:700;
+    color:var(--forest-deep);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:0.4rem 0.9rem;
+    cursor:pointer;
+  }
+  .switch-btn:hover{ background:var(--forest); color:#fff; }
+  .switch-chev{ font-size:0.7em; display:inline-block; transition:transform 0.2s ease; }
+  .switch.is-open .switch-chev{ transform:rotate(180deg); }
+  .switch-menu{
+    position:absolute;
+    top:calc(100% + 0.5rem);
+    left:0;
+    min-width:190px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 12px 30px rgba(10,79,60,0.18);
+    padding:0.4rem;
+    display:none;
+    flex-direction:column;
+    gap:0.15rem;
+  }
+  .switch.is-open .switch-menu{ display:flex; }
+  .switch-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:0.6rem;
+    padding:0.5rem 0.7rem;
+    border-radius:8px;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color:var(--ink);
+    text-decoration:none;
+  }
+  .switch-item:hover{ background:var(--bg); }
+  .switch-item.is-current{ background:var(--forest-deep); color:#fff; pointer-events:none; }
+  .switch-item-time{ color:var(--ink-soft); font-size:0.75em; }
+  .switch-item.is-current .switch-item-time{ color:#CFE4D8; }
+
+  @media print{
+    .deck{ height:auto; overflow:visible; }
+    .slide{ min-height:100vh; break-inside:avoid; page-break-after:always; scroll-snap-align:none; opacity:1 !important; transform:none !important; }
+    .progress, .counter, .nav-btn, .timer, .switch{ display:none; }
+  }
+
+  .swagger-img{
+    max-width:620px;
+    width:100%;
+    border-radius:8px;
+    border:1px solid var(--line);
+    box-shadow:0 10px 28px rgba(10,79,60,0.18);
+    margin-top:1.8rem;
+  }
+  .proof-img{
+    max-width:100%;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18);
+    margin-top:1.6rem;
+  }
+  .proof-row{
+    display:flex;
+    gap:1.3rem;
+    flex-wrap:wrap;
+    justify-content:center;
+    width:100%;
+    max-width:900px;
+    margin-top:1.6rem;
+  }
+  .proof-item{
+    flex:1 1 340px;
+    max-width:420px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .proof-label{
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--lime);
+    margin-bottom:0.6rem;
+  }
+  .proof-item .proof-img{ margin-top:0; width:100%; }
+
+  /* --- New for Épreuve 5: incident postmortem sequence --- */
+  .incident-seq{
+    list-style:none;
+    padding:0;
+    margin:2.2rem auto 0;
+    display:flex;
+    flex-direction:column;
+    gap:0.8rem;
+    width:100%;
+    max-width:660px;
+    text-align:left;
+  }
+  .incident-seq li{
+    display:flex;
+    gap:1.1rem;
+    align-items:flex-start;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:6px solid var(--ink-soft);
+    border-radius:0 8px 8px 0;
+    padding:0.85rem 1.2rem;
+  }
+  .incident-seq .tag{
+    flex:0 0 auto;
+    width:6.6rem;
+    padding-top:0.15rem;
+    font-family:var(--font-mono);
+    font-size:0.66rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .incident-seq .body{ flex:1; }
+  .incident-seq .body .h{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(0.98rem,1.7vw,1.12rem);
+    color:var(--forest-deep);
+  }
+  .incident-seq .body .d{
+    margin-top:0.25rem;
+    color:var(--ink-soft);
+    font-size:0.86rem;
+    line-height:1.45;
+  }
+  .incident-seq li.symptom{ border-left-color:var(--alert); }
+  .incident-seq li.symptom .tag{ color:var(--alert); }
+  .incident-seq li.hypotheses{ border-left-color:var(--ink-soft); }
+  .incident-seq li.cause{ border-left-color:var(--orange-deep); }
+  .incident-seq li.cause .tag{ color:var(--orange-deep); }
+  .incident-seq li.fix{ border-left-color:var(--lime-deep); }
+  .incident-seq li.fix .tag{ color:var(--lime-deep); }
+  .incident-seq li.prevention{ border-left-color:var(--forest); background:#F2F8F0; }
+  .incident-seq li.prevention .tag{ color:var(--forest); }
+
+  /* --- New for Épreuve 5: metric / threshold grid --- */
+  .metric-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:1.1rem;
+    margin-top:2.3rem;
+    width:100%;
+    max-width:840px;
+  }
+  .metric-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1.2rem 1.3rem;
+    text-align:left;
+  }
+  .metric-card .m-name{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1rem;
+    color:var(--forest-deep);
+  }
+  .metric-card .m-detail{
+    margin-top:0.35rem;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    line-height:1.4;
+  }
+  .metric-card .m-threshold{
+    margin-top:0.9rem;
+    display:flex;
+    align-items:baseline;
+    gap:0.5rem;
+  }
+  .metric-card .m-threshold .val{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:1.5rem;
+    color:var(--orange-deep);
+  }
+  .metric-card .m-threshold .lbl{
+    font-family:var(--font-mono);
+    font-size:0.66rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--ink-soft);
+  }
+  .metric-card .redline{
+    margin-top:0.65rem;
+    height:6px;
+    border-radius:3px;
+    background:linear-gradient(to right, var(--lime-deep) 0%, var(--lime-deep) var(--pct,70%), var(--alert) var(--pct,70%), var(--alert) 100%);
+  }
+
+  /* --- New for Épreuve 5: terminal / log-line block --- */
+  .terminal{
+    text-align:left;
+    background:var(--code-bg);
+    border:1px solid var(--code-line);
+    border-radius:8px;
+    padding:1.1rem 1.3rem;
+    max-width:660px;
+    width:100%;
+    margin:1.9rem auto 0;
+    font-family:var(--font-mono);
+    font-size:clamp(0.76rem,1.15vw,0.92rem);
+    overflow-x:auto;
+  }
+  .terminal .line{
+    display:flex;
+    gap:0.8rem;
+    align-items:flex-start;
+    padding:0.32rem 0;
+    border-top:1px solid var(--code-line);
+  }
+  .terminal .line:first-child{ border-top:none; }
+  .terminal .lvl{
+    flex:0 0 auto;
+    font-weight:700;
+    font-size:0.68rem;
+    letter-spacing:0.03em;
+    padding:0.12rem 0.45rem;
+    border-radius:3px;
+    margin-top:0.1rem;
+  }
+  .terminal .lvl.info{ color:#8FD1B8; background:rgba(143,209,184,0.14); }
+  .terminal .lvl.warning{ color:#F2C879; background:rgba(242,200,121,0.14); }
+  .terminal .lvl.error{ color:#F0897A; background:rgba(240,137,122,0.16); }
+  .terminal .msg{ color:var(--code-ink); line-height:1.5; }
+
+  /* --- New for Épreuve 5: mock dashboard panel --- */
+  .panel-row{
+    display:flex;
+    gap:1.2rem;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:2.3rem;
+    width:100%;
+    max-width:760px;
+  }
+  .panel{
+    flex:1 1 260px;
+    max-width:340px;
+    background:var(--forest-deep);
+    border-radius:8px;
+    padding:1.15rem 1.3rem;
+    text-align:left;
+    border:1px solid rgba(255,255,255,0.12);
+  }
+  .panel .p-title{
+    font-family:var(--font-mono);
+    font-size:0.68rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:#CFE4D8;
+  }
+  .panel .p-value{
+    margin-top:0.55rem;
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:2.1rem;
+    line-height:1;
+  }
+  .panel.status-ok .p-value{ color:var(--lime); }
+  .panel.status-alert .p-value{ color:var(--alert); }
+  .panel .p-sub{
+    margin-top:0.5rem;
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    color:#9FC2AF;
+  }
+</style>
+</head>
+<body>
+
+<div class="switch" id="epreuveSwitch">
+  <button class="switch-btn" id="switchBtn" aria-haspopup="true" aria-expanded="false">Épreuve 5 <span class="switch-chev">&#9662;</span></button>
+  <div class="switch-menu" id="switchMenu" role="menu">
+    <a href="soutenance-e1.html" class="switch-item" role="menuitem">E1 <span class="switch-item-time">15 min</span></a>
+    <a href="soutenance-e3.html" class="switch-item" role="menuitem">E3 <span class="switch-item-time">20 min</span></a>
+    <a href="soutenance-e4.html" class="switch-item" role="menuitem">E4 <span class="switch-item-time">20 min</span></a>
+    <a href="soutenance-e2.html" class="switch-item" role="menuitem">E2 <span class="switch-item-time">15 min</span></a>
+    <a href="soutenance-e5.html" class="switch-item is-current" role="menuitem">E5 <span class="switch-item-time">10 min</span></a>
+  </div>
+</div>
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">
+  <input type="number" id="pageInput" min="1" value="1" aria-label="Aller à la diapositive numéro">
+  <span>/</span>
+  <span id="totalPages"></span>
+</div>
+<button class="nav-btn nav-prev" id="prevBtn" aria-label="Diapositive précédente">&#8592;</button>
+<button class="nav-btn nav-next" id="nextBtn" aria-label="Diapositive suivante">&#8594;</button>
+<div class="timer" id="timer" role="button" tabindex="0" aria-label="Minuteur de l'épreuve, 10 minutes. Clic pour démarrer ou mettre en pause, double-clic pour réinitialiser." title="Clic : démarrer/pause · Double-clic : réinitialiser (10 min officielles)">
+  <span class="timer-dot"></span>
+  <span id="timerDisplay">10:00</span>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- Ouverture -->
+  <section class="slide slide--dark">
+    <p class="kicker">RNCP 37827 &middot; Développeur en Intelligence Artificielle</p>
+    <h1 class="big">Épreuve 5</h1>
+    <p class="sub">Surveillance applicative et résolution des incidents techniques</p>
+  </section>
+
+  <section class="slide slide--dark">
+    <p class="kicker">Épreuve 5 · RNCP 37827</p>
+    <h1 class="big">Surveiller, diagnostiquer, corriger, sans attendre l&rsquo;incident</h1>
+    <p class="sub">Dispositif de supervision et résolution des incidents techniques &middot; Plateforme météo CIFOR ICRAF</p>
+    <p class="signature">Joseph Haccandy</p>
+  </section>
+
+  <!-- Contexte -->
+  <section class="slide slide--light">
+    <p class="kicker">Contexte</p>
+    <h2 class="big">Une application livrée n&rsquo;est pas fiable indéfiniment</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Données mal formées</div><div class="detail">Des données mal formées arrivent parfois depuis le terrain</div></div>
+      <div class="pair-card"><div class="label">Dépendances qui évoluent</div><div class="detail">Les bibliothèques et services externes évoluent parfois</div></div>
+      <div class="pair-card"><div class="label">Configuration incomplète</div><div class="detail">Une configuration se révèle parfois incomplète, confrontée à un usage réel</div></div>
+    </div>
+    <p class="caption-line">Sans surveillance continue, ces situations restent invisibles jusqu&rsquo;à ce qu&rsquo;un utilisateur les découvre</p>
+  </section>
+
+  <!-- Déroulé : C20 puis C21 -->
+  <section class="slide slide--light">
+    <p class="kicker">Déroulé</p>
+    <h2 class="big">Deux compétences, un même fil</h2>
+    <ol class="roadmap">
+      <li><span class="num">1</span><span class="label">Surveiller l&rsquo;application en continu</span></li>
+      <li><span class="num">2</span><span class="label">Résoudre trois incidents techniques réels</span></li>
+    </ol>
+    <p class="caption-line">Pour chaque incident : comment il a été vu, diagnostiqué, corrigé, prévenu</p>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">Avant de résoudre un incident, encore faut-il pouvoir le voir. Tout repose sur un dispositif de surveillance continue.</p>
+    <p class="transition-next">Le dispositif de surveillance</p>
+  </section>
+
+  <!-- C20: outillage installé et opérationnel; arguments des choix techniques -->
+  <section class="slide slide--light">
+    <p class="kicker">Dispositif de surveillance</p>
+    <h2 class="big">Deux outils complémentaires</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Prometheus</div><div class="detail">Interroge l&rsquo;ensemble des services toutes les 15 secondes et en extrait des métriques chiffrées</div></div>
+      <div class="pair-card"><div class="label">Grafana</div><div class="detail">Transforme ces métriques en tableaux de bord visuels, consultables en continu</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="num forest">15s</span><span class="cap">Intervalle de collecte</span></div>
+      <div class="stat"><span class="num forest">16</span><span class="cap">Panneaux de tableau de bord</span></div>
+      <div class="stat"><span class="num forest">6</span><span class="cap">Cibles surveillées</span></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Pourquoi ces deux outils</div>
+      <div class="detail">Déjà mis en place à l&rsquo;Épreuve 3 pour surveiller le modèle IA, Prometheus et Grafana sont ici étendus à l&rsquo;ensemble de l&rsquo;application : Prometheus détecte et quantifie, Grafana rend l&rsquo;ensemble consultable en un coup d&rsquo;œil. Les deux sont opérationnels en environnement local, aux côtés de l&rsquo;API et du dashboard.</div>
+    </div>
+  </section>
+
+  <!-- C20: cibles surveillées, outillage opérationnel -->
+  <section class="slide slide--light">
+    <p class="kicker">Dispositif de surveillance</p>
+    <h2 class="big">Six cibles surveillées</h2>
+    <div class="chip-grid">
+      <div class="chip">API</div>
+      <div class="chip">Dashboard</div>
+      <div class="chip">Base de données</div>
+      <div class="chip">Infrastructure système</div>
+      <div class="chip">Conteneurs</div>
+      <div class="chip">Outil de supervision lui-même</div>
+    </div>
+    <p class="caption-line">La supervision se vérifie aussi contre sa propre configuration</p>
+  </section>
+
+  <!-- C20: documentation d'installation et de configuration de l'outillage -->
+  <section class="slide slide--light">
+    <p class="kicker">Dispositif de surveillance</p>
+    <h2 class="big">Une seule commande pour tout démarrer</h2>
+    <pre class="code" style="text-align:left;max-width:640px;font-size:0.85rem;"><code>docker compose up -d</code></pre>
+    <div class="chip-grid" style="margin-top:1.6rem;">
+      <div class="chip">prometheus &middot; port 9090</div>
+      <div class="chip">grafana &middot; port 3001</div>
+      <div class="chip">postgres-exporter &middot; port 9187</div>
+      <div class="chip">node-exporter &middot; port 9100</div>
+      <div class="chip">cadvisor &middot; port 8080</div>
+    </div>
+    <p class="caption-line">docs/monitoring.md &mdash; aucune étape manuelle supplémentaire : tableau de bord Grafana provisionné automatiquement, cibles Prometheus définies dans monitoring/prometheus.yml</p>
+  </section>
+
+  <!-- C20: métriques mesurées -->
+  <section class="slide slide--light">
+    <p class="kicker">Indicateurs</p>
+    <h2 class="big">Quatre indicateurs mesurés en continu</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Fraîcheur des données</div><div class="detail">Ancienneté en heures de la dernière mesure reçue, par station</div></div>
+      <div class="pair-card"><div class="label">Erreur du modèle</div><div class="detail">MAE température la plus récente, par station et par source</div></div>
+      <div class="pair-card"><div class="label">Comportement HTTP</div><div class="detail">Nombre de requêtes, taux d&rsquo;erreur par code, temps de réponse de l&rsquo;API</div></div>
+      <div class="pair-card"><div class="label">Santé des conteneurs</div><div class="detail">État de santé de chaque conteneur du projet</div></div>
+    </div>
+  </section>
+
+  <!-- C20: métriques et seuils d'alerte pour chaque métrique à risque -->
+  <section class="slide slide--light">
+    <p class="kicker">Seuils</p>
+    <h2 class="big">Des seuils chiffrés, pas des impressions</h2>
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="m-name">Fraîcheur des données terrain</div>
+        <div class="m-threshold"><span class="val">&lt; 7h</span><span class="lbl">seuil d&rsquo;alerte</span></div>
+        <div class="redline" style="--pct:80%"></div>
+        <div class="m-detail">Collecte prévue toutes les 6h, +1h de marge avant de considérer que les données ne remontent plus</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-name">Erreur du modèle de correction</div>
+        <div class="m-threshold"><span class="val">&lt; 3°C</span><span class="lbl">seuil d&rsquo;alerte</span></div>
+        <div class="redline" style="--pct:65%"></div>
+        <div class="m-detail">Au-delà, la prévision devient trop imprécise pour aider une décision sur le terrain</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-name">Taux d&rsquo;erreur de l&rsquo;API</div>
+        <div class="m-threshold"><span class="val">&lt; 5%</span><span class="lbl">requêtes / 5 min</span></div>
+        <div class="redline" style="--pct:90%"></div>
+        <div class="m-detail">Une erreur isolée reste possible ; une panne qui touche beaucoup d&rsquo;appels est signalée</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-name">Temps de réponse de l&rsquo;API</div>
+        <div class="m-threshold"><span class="val">&lt; 1s</span><span class="lbl">pour 95% des requêtes</span></div>
+        <div class="redline" style="--pct:85%"></div>
+        <div class="m-detail">L&rsquo;interface reste fluide, même si plusieurs personnes la consultent en même temps</div>
+      </div>
+    </div>
+    <p class="caption-line">La santé des conteneurs complète ces seuils par un statut opérationnel, sans valeur chiffrée</p>
+  </section>
+
+  <!-- C20: alertes configurées et opérationnelles -->
+  <section class="slide slide--light">
+    <p class="kicker">Alertes</p>
+    <h2 class="big">Des seuils configurés en alertes, réellement déclenchées</h2>
+    <div class="terminal">
+      <div class="line"><span class="lvl error">ALERTE ROUGE</span><span class="msg">Station CNRA_Ferke : température 42.3°C (seuil 40.0°C)</span></div>
+      <div class="line"><span class="lvl warning">ALERTE ORANGE</span><span class="msg">Station Bongouanou : précipitation 61.5mm (seuil 50.0mm/24h)</span></div>
+      <div class="line"><span class="lvl warning">ALERTE MODÈLE</span><span class="msg">Station Bongouanou : MAE température 3.90°C (seuil 3.0°C)</span></div>
+    </div>
+    <p class="caption-line">Sortie réelle de <code>check_alerts()</code> (dashboard/monitoring.py) avec des valeurs dépassant les trois seuils &mdash; pas une simple description, une exécution</p>
+    <div class="flow">
+      <span class="step">Seuil dépassé</span><span class="arrow">&#8594;</span>
+      <span class="step">Alerte déclenchée</span><span class="arrow">&#8594;</span>
+      <span class="step">Signalement, sans surveillance humaine continue</span>
+    </div>
+  </section>
+
+  <!-- C20: règles de journalisation intégrées aux sources -->
+  <section class="slide slide--light">
+    <p class="kicker">Journalisation</p>
+    <h2 class="big">Des journaux structurés, par niveau de gravité</h2>
+    <div class="terminal">
+      <div class="line"><span class="lvl info">INFO</span><span class="msg">Connexion à la base de données établie</span></div>
+      <div class="line"><span class="lvl warning">WARNING</span><span class="msg">Station distante : latence de réponse élevée</span></div>
+      <div class="line"><span class="lvl error">ERROR</span><span class="msg">Table attendue introuvable dans la base de données</span></div>
+    </div>
+    <p class="caption-line">Chaque ligne est horodatée et exploitable après coup : une défaillance devient une ligne de niveau erreur, immédiate</p>
+  </section>
+
+  <!-- C20: respect des normes de gestion des données personnelles -->
+  <section class="slide slide--light">
+    <p class="kicker">Données personnelles</p>
+    <h2 class="big">Aucune donnée surveillée n&rsquo;identifie une personne</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Mesures météorologiques</div><div class="detail">Températures, précipitations, données par station</div></div>
+      <div class="pair-card"><div class="label">Métriques techniques</div><div class="detail">Latence, taux d&rsquo;erreur, fraîcheur, santé des conteneurs</div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Vérifié explicitement, pas seulement supposé</div>
+      <div class="detail">Aucune de ces données ne permet d&rsquo;identifier une personne physique</div>
+    </div>
+  </section>
+
+  <!-- C20: portée et limite assumée du dispositif -->
+  <section class="slide slide--light">
+    <p class="kicker">Portée du dispositif</p>
+    <h2 class="big">Ce que la surveillance détecte, et ce qu&rsquo;elle ne détecte pas encore</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Défaillance bruyante</div><div class="detail">Une erreur qui interrompt un traitement et remonte dans les journaux</div></div>
+      <div class="pair-card"><div class="label">Absence de résultat</div><div class="detail">Un panneau ou une métrique qui reste vide alors qu&rsquo;une donnée est attendue</div></div>
+      <div class="pair-card"><div class="label">Erreur silencieuse</div><div class="detail">Un code qui s&rsquo;exécute sans planter mais produit un résultat faux, non détecté aujourd&rsquo;hui</div></div>
+    </div>
+  </section>
+
+  <section class="slide slide--transition">
+    <p class="transition-line">Ce dispositif n&rsquo;a pas empêché les incidents. Il a changé la façon dont ils ont été trouvés. Trois incidents réels le montrent.</p>
+    <p class="transition-next">Trois incidents techniques réels</p>
+  </section>
+
+  <!-- C21: problème observé, incident 1 -->
+  <section class="slide slide--light">
+    <p class="kicker">Incident 1</p>
+    <h2 class="big">L&rsquo;API ne répond plus</h2>
+    <div class="panel-row">
+      <div class="panel status-alert"><div class="p-title">Statut global API</div><div class="p-value">Rouge</div><div class="p-sub">Le service ne répond plus</div></div>
+      <div class="panel status-alert"><div class="p-title">Taux d&rsquo;erreur HTTP 5xx</div><div class="p-value">100%</div><div class="p-sub">Toutes les requêtes échouent</div></div>
+    </div>
+    <p class="caption-line">Constaté directement sur le tableau de bord de supervision</p>
+  </section>
+
+  <!-- C21: cause identifiée, solution documentée et versionnée -->
+  <section class="slide slide--light">
+    <p class="kicker">Incident 1</p>
+    <h2 class="big">Diagnostic et correction</h2>
+    <ol class="incident-seq">
+      <li class="symptom"><span class="tag">Symptôme</span><div class="body"><div class="h">Panneau rouge, 100% d&rsquo;erreurs 5xx</div><div class="d">Toutes les requêtes envoyées au serveur échouent</div></div></li>
+      <li class="hypotheses"><span class="tag">Pistes</span><div class="body"><div class="h">Conteneur arrêté, base injoignable, ou table absente</div><div class="d">Trois hypothèses envisagées avant de trancher</div></div></li>
+      <li class="cause"><span class="tag">Cause</span><div class="body"><div class="h">La base n&rsquo;avait pas encore été initialisée</div><div class="d">Conteneur actif, connexion à la base correcte, mais une table attendue n&rsquo;existe pas encore dans la base de données</div></div></li>
+      <li class="fix"><span class="tag">Correction</span><div class="body"><div class="h">Script d&rsquo;initialisation exécuté, puis automatisé</div><div class="d">Exécution manuelle immédiate du script de création des tables, puis intégration au démarrage de l&rsquo;API</div></div></li>
+      <li class="prevention"><span class="tag">Prévention</span><div class="body"><div class="h">Initialisation automatique à chaque lancement</div><div class="d">Les indicateurs repassent au vert ; l&rsquo;incident ne peut plus se reproduire silencieusement au démarrage</div></div></li>
+    </ol>
+    <p class="caption-line">Consigné dans docs/incident_log.md (Incident 9) &mdash; le même outil de suivi utilisé pour tous les incidents du projet, versionné sur github.com/h3joseph/certification-</p>
+  </section>
+
+  <!-- C21: problème observé, incident 2 -->
+  <section class="slide slide--light">
+    <p class="kicker">Incident 2</p>
+    <h2 class="big">Le tableau de bord n&rsquo;arrive pas à contacter l&rsquo;API</h2>
+    <div class="panel-row">
+      <div class="panel status-alert"><div class="p-title">Requêtes API par endpoint</div><div class="p-value">0</div><div class="p-sub">Sur deux routes normalement interrogées</div></div>
+      <div class="panel status-alert"><div class="p-title">Message utilisateur</div><div class="p-value">Erreur</div><div class="p-sub">&laquo; API inaccessible &raquo; sur les pages concernées</div></div>
+    </div>
+    <p class="caption-line">Constaté sur le tableau de bord de supervision et signalé par les utilisateurs</p>
+  </section>
+
+  <!-- C21: cause identifiée, solution documentée et versionnée -->
+  <section class="slide slide--light">
+    <p class="kicker">Incident 2</p>
+    <h2 class="big">Diagnostic et correction</h2>
+    <ol class="incident-seq">
+      <li class="symptom"><span class="tag">Symptôme</span><div class="body"><div class="h">Compteur à zéro sur deux routes</div><div class="d">Les utilisateurs obtiennent un message indiquant que l&rsquo;API est inaccessible</div></div></li>
+      <li class="hypotheses"><span class="tag">Pistes</span><div class="body"><div class="h">Origine API ou origine dashboard</div><div class="d">Requêtes envoyées directement vers les deux routes : réponses valides, l&rsquo;API fonctionne normalement</div></div></li>
+      <li class="cause"><span class="tag">Cause</span><div class="body"><div class="h">Adresse de secours mal orientée</div><div class="d">L&rsquo;adresse de l&rsquo;API n&rsquo;est pas définie dans la configuration ; l&rsquo;adresse de secours utilisée pointe vers le tableau de bord lui-même</div></div></li>
+      <li class="fix"><span class="tag">Correction</span><div class="body"><div class="h">Adresse correcte ajoutée à la configuration</div><div class="d">Fichier de configuration du tableau de bord corrigé, application redémarrée</div></div></li>
+      <li class="prevention"><span class="tag">Prévention</span><div class="body"><div class="h">Communication revérifiée après correction</div><div class="d">Une nouvelle série de requêtes confirme le rétablissement de la communication et de l&rsquo;affichage des données</div></div></li>
+    </ol>
+    <p class="caption-line">Consigné dans docs/incident_log.md (Incident 10) &mdash; le même outil de suivi utilisé pour tous les incidents du projet, versionné sur github.com/h3joseph/certification-</p>
+  </section>
+
+  <!-- C21: problème observé, incident 3 -->
+  <section class="slide slide--light">
+    <p class="kicker">Incident 3</p>
+    <h2 class="big">Un test automatique échoue en intégration continue</h2>
+    <div class="terminal">
+      <div class="line"><span class="lvl info">INFO</span><span class="msg">GitHub Actions : exécution de la suite de tests</span></div>
+      <div class="line"><span class="lvl error">ERROR</span><span class="msg">Un test échoue : réponse de succès attendue, réponse d&rsquo;erreur renvoyée</span></div>
+    </div>
+    <p class="caption-line">Constaté après un envoi de code, dans la chaîne d&rsquo;intégration continue</p>
+  </section>
+
+  <!-- C21: cause identifiée, solution documentée et versionnée -->
+  <section class="slide slide--light">
+    <p class="kicker">Incident 3</p>
+    <h2 class="big">Diagnostic et correction</h2>
+    <ol class="incident-seq">
+      <li class="symptom"><span class="tag">Symptôme</span><div class="body"><div class="h">Un test échoue à l&rsquo;envoi de code</div><div class="d">Réponse de succès attendue, réponse d&rsquo;erreur renvoyée par l&rsquo;API testée</div></div></li>
+      <li class="hypotheses"><span class="tag">Pistes</span><div class="body"><div class="h">Panne réseau, dysfonctionnement de l&rsquo;API, ou test mal écrit</div><div class="d">Les autres tests réussissent tous : problème réseau et dysfonctionnement général de l&rsquo;API écartés</div></div></li>
+      <li class="cause"><span class="tag">Cause</span><div class="body"><div class="h">Préfixe manquant dans l&rsquo;URL utilisée par le test</div><div class="d">Comparaison de l&rsquo;adresse testée aux routes réellement exposées par l&rsquo;API</div></div></li>
+      <li class="fix"><span class="tag">Correction</span><div class="body"><div class="h">Préfixe ajouté à l&rsquo;adresse utilisée dans le test</div><div class="d">Chaîne d&rsquo;intégration continue relancée</div></div></li>
+      <li class="prevention"><span class="tag">Prévention</span><div class="body"><div class="h">Ensemble des tests validé avec succès</div><div class="d">Confirmation que le problème provenait uniquement du test, non de l&rsquo;application</div></div></li>
+    </ol>
+    <p class="caption-line">Consigné dans docs/incident_log.md (Incident 11) &mdash; le même outil de suivi utilisé pour tous les incidents du projet, versionné sur github.com/h3joseph/certification-</p>
+  </section>
+
+  <!-- C21: bilan honnête, bruyant / silencieux -->
+  <section class="slide slide--light">
+    <p class="kicker">Bilan</p>
+    <h2 class="big">La surveillance n&rsquo;a pas empêché les incidents, elle a changé comment ils ont été trouvés</h2>
+    <div class="row">
+      <div class="pair-card"><div class="label">Incidents 1, 2 et 3</div><div class="detail">Chacun rendu visible par un signal net : panneau rouge, compteur à zéro, test qui échoue &mdash; jamais une relecture de code à l&rsquo;aveugle</div></div>
+      <div class="pair-card"><div class="label">Limite assumée du dispositif</div><div class="detail">Un calcul figé ou une insertion jamais réalisée resteraient aujourd&rsquo;hui invisibles : la cohérence logique d&rsquo;un résultat dans le temps n&rsquo;est pas encore couverte</div></div>
+    </div>
+    <div class="callout">
+      <div class="headline">Chaque résolution a renforcé le dispositif</div>
+      <div class="detail">Une correction de code vérifiée par un test, et à chaque fois une métrique, un test, ou une documentation en plus pour reconnaître immédiatement un problème similaire</div>
+    </div>
+  </section>
+
+  <section class="slide slide--dark">
+    <h1 class="big" style="font-size:clamp(2rem,4.6vw,3.4rem)">Fiabiliser la donnée météo, de la collecte à la résolution d&rsquo;incident</h1>
+    <p class="sub">Surveiller, diagnostiquer, corriger, au service de la décision agronomique en Côte d&rsquo;Ivoire</p>
+    <p class="caption-line" style="color:#CFE4D8;">github.com/h3joseph/certification-</p>
+    <p class="signature">Merci</p>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var progress = document.getElementById('progress');
+  var pageInput = document.getElementById('pageInput');
+  var totalPages = document.getElementById('totalPages');
+  var total = slides.length;
+  var current = 0;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  pageInput.max = total;
+  totalPages.textContent = total;
+
+  function update(index){
+    current = Math.max(0, Math.min(total - 1, index));
+    if (document.activeElement !== pageInput){ pageInput.value = current + 1; }
+    progress.style.width = (current / (total - 1)) * 100 + '%';
+  }
+
+  function goTo(index){
+    index = Math.max(0, Math.min(total - 1, index));
+    slides[index].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  function commitPageJump(){
+    var n = parseInt(pageInput.value, 10);
+    if (!isNaN(n)){ goTo(n - 1); }
+    pageInput.value = current + 1;
+  }
+
+  pageInput.addEventListener('change', commitPageJump);
+  pageInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); commitPageJump(); pageInput.blur(); }
+    e.stopPropagation();
+  });
+
+  if ('IntersectionObserver' in window){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting && entry.intersectionRatio > 0.6){
+          update(slides.indexOf(entry.target));
+          entry.target.classList.add('is-in');
+        } else {
+          entry.target.classList.remove('is-in');
+        }
+      });
+    }, { threshold: [0.6] });
+    slides.forEach(function(s){ observer.observe(s); });
+  } else {
+    slides.forEach(function(s){ s.classList.add('is-in'); });
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', function(){ goTo(current + 1); });
+  document.getElementById('prevBtn').addEventListener('click', function(){ goTo(current - 1); });
+
+  window.addEventListener('keydown', function(e){
+    if (['ArrowRight','ArrowDown','PageDown',' '].indexOf(e.key) !== -1){
+      e.preventDefault(); goTo(current + 1);
+    } else if (['ArrowLeft','ArrowUp','PageUp'].indexOf(e.key) !== -1){
+      e.preventDefault(); goTo(current - 1);
+    }
+  });
+
+  update(0);
+})();
+
+(function(){
+  var switchEl = document.getElementById('epreuveSwitch');
+  var switchBtn = document.getElementById('switchBtn');
+  if (!switchEl || !switchBtn) return;
+  function closeSwitch(){
+    switchEl.classList.remove('is-open');
+    switchBtn.setAttribute('aria-expanded', 'false');
+  }
+  switchBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = switchEl.classList.toggle('is-open');
+    switchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', function(e){
+    if (!switchEl.contains(e.target)){ closeSwitch(); }
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){ closeSwitch(); }
+  });
+})();
+
+(function(){
+  var DURATION_MIN = 10;
+  var timerEl = document.getElementById('timer');
+  var display = document.getElementById('timerDisplay');
+  if (!timerEl || !display) return;
+  var remaining = DURATION_MIN * 60;
+  var running = false;
+  var intervalId = null;
+
+  function format(s){
+    var neg = s < 0;
+    var abs = Math.abs(s);
+    var m = Math.floor(abs / 60);
+    var sec = abs % 60;
+    return (neg ? '-' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function render(){
+    display.textContent = format(remaining);
+    timerEl.classList.toggle('is-warning', remaining <= 300 && remaining > 60);
+    timerEl.classList.toggle('is-danger', remaining <= 60);
+  }
+
+  function tick(){
+    remaining -= 1;
+    render();
+  }
+
+  function start(){
+    if (running) return;
+    running = true;
+    timerEl.classList.add('is-running');
+    intervalId = setInterval(tick, 1000);
+  }
+
+  function pause(){
+    running = false;
+    timerEl.classList.remove('is-running');
+    clearInterval(intervalId);
+  }
+
+  function reset(){
+    pause();
+    remaining = DURATION_MIN * 60;
+    render();
+  }
+
+  function toggle(){ running ? pause() : start(); }
+
+  timerEl.addEventListener('click', toggle);
+  timerEl.addEventListener('dblclick', function(e){ e.stopPropagation(); reset(); });
+  timerEl.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+    else if (e.key === 'r' || e.key === 'R'){ reset(); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
