@@ -320,6 +320,132 @@
     color:var(--forest-deep);
   }
 
+  /* Schemas verticaux (extraction externe et pipeline ETL) */
+  .vflow{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    max-width:720px;
+    margin:0.9rem auto 0;
+  }
+  .vflow-with-annot{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:0.9rem;
+    width:100%;
+  }
+  .vflow-node{
+    display:flex;
+    flex-direction:column;
+    gap:0.1rem;
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:clamp(0.92rem,1.5vw,1.1rem);
+    background:var(--forest);
+    color:#fff;
+    padding:0.5rem 1.3rem;
+    border-radius:999px;
+    text-align:center;
+    line-height:1.2;
+  }
+  .vflow-node.is-end{ background:var(--forest-deep); }
+  .vflow-node-sub{ font-weight:500; font-size:0.68rem; opacity:.85; }
+  .vflow-annot{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid var(--lime-deep);
+    border-radius:0 8px 8px 0;
+    padding:0.5rem 0.9rem;
+    max-width:340px;
+    text-align:left;
+    font-size:0.78rem;
+    line-height:1.3;
+    color:var(--ink-soft);
+  }
+  .vflow-annot.is-wide{ max-width:600px; width:100%; text-align:center; }
+  .vflow-annot strong{ color:var(--forest-deep); }
+  .vflow-side{
+    margin-top:0.5rem;
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:0.4rem 0.9rem;
+    font-size:0.75rem;
+    line-height:1.3;
+    color:var(--ink-soft);
+    max-width:600px;
+    text-align:center;
+  }
+  .vflow-side strong{ color:var(--forest-deep); }
+  .varrows{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+    max-width:480px;
+    margin:0.2rem 0;
+  }
+  .varrows.single{ grid-template-columns:1fr; max-width:120px; }
+  .varrows.chain{ margin:0.06rem 0; }
+  .varrows.chain .varrow{ font-size:0.95rem; }
+  .varrow{ text-align:center; color:var(--lime-deep); font-size:1.3rem; line-height:1; }
+  .vflow-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1.1rem;
+    width:100%;
+    max-width:560px;
+  }
+  .vflow-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-top:5px solid var(--forest);
+    border-radius:8px;
+    padding:0.65rem 0.9rem;
+    text-align:left;
+  }
+  .vflow-card:nth-child(2){ border-top-color:var(--orange); }
+  .vflow-card .title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:0.95rem;
+    color:var(--forest-deep);
+    margin-bottom:0.2rem;
+  }
+  .vflow-card .detail{ color:var(--ink-soft); font-size:0.76rem; line-height:1.32; }
+
+  .vflow-node.is-compact{
+    padding:0.3rem 1rem;
+    font-size:0.82rem;
+  }
+  .vflow-with-annot.is-compact{ gap:0.7rem; }
+  .vflow-with-annot.is-compact .vflow-annot{
+    padding:0.3rem 0.75rem;
+    font-size:0.72rem;
+    line-height:1.25;
+    max-width:300px;
+  }
+
+  .tenacity-box{
+    margin-top:0.6rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:6px solid var(--orange);
+    border-radius:0 8px 8px 0;
+    padding:0.6rem 1.05rem;
+    max-width:640px;
+    width:100%;
+    text-align:left;
+  }
+  .tenacity-box .headline{
+    font-family:var(--font-display);
+    font-weight:700;
+    color:var(--forest-deep);
+    font-size:0.94rem;
+  }
+  .tenacity-box .detail{ margin-top:0.25rem; color:var(--ink-soft); font-size:0.79rem; line-height:1.35; }
+
   .schema-wrap{
     position:relative;
     width:100%;
@@ -948,65 +1074,71 @@ CREATE TABLE mesure_reelle (
 
   <section class="slide slide--light">
     <p class="kicker">Étape 2 · Collecte</p>
-    <h2 class="big">Deux pipelines, un fichier Python par source</h2>
-    <div class="flow">
-      <span class="step">config.py</span><span class="arrow">&#8594;</span>
-      <span class="step">collect_openmeteo.py / collect_weatherapi.py</span><span class="arrow">&#8594;</span>
-      <span class="step">etl/etl.py</span>
+    <h2 class="big">Extraction des données externes</h2>
+    <div class="vflow">
+      <div class="vflow-with-annot">
+        <div class="vflow-node">
+          <span>Déclenchement automatique</span>
+          <span class="vflow-node-sub">7h00</span>
+        </div>
+        <div class="vflow-annot">APScheduler &middot; 1 par source &middot; sans intervention</div>
+      </div>
+      <div class="varrows" aria-hidden="true"><span class="varrow">&#8595;</span><span class="varrow">&#8595;</span></div>
+      <div class="vflow-row">
+        <div class="vflow-card">
+          <div class="title">Collecte Open-Meteo</div>
+          <div class="detail">Sans clé</div>
+        </div>
+        <div class="vflow-card">
+          <div class="title">Collecte WeatherAPI</div>
+          <div class="detail">Clé requise (.env)</div>
+        </div>
+      </div>
+      <div class="vflow-annot is-wide" style="margin-top:0.5rem;">Même architecture &middot; analyseur propre à chaque API</div>
+      <div class="varrows" aria-hidden="true"><span class="varrow">&#8595;</span><span class="varrow">&#8595;</span></div>
+      <div class="vflow-node is-end">Pipeline ETL</div>
     </div>
-    <div class="row" style="margin-top:1.6rem; max-width:none;">
-      <div class="pair-card" style="max-width:520px;"><div class="label">collect/collect_openmeteo.py</div><div class="detail">Accès par URL uniquement, aucune clé requise</div></div>
-      <div class="pair-card" style="max-width:520px;"><div class="label">collect/collect_weatherapi.py</div><div class="detail">Clé API requise, chargée depuis .env</div></div>
-      <div class="pair-card" style="max-width:520px;"><div class="label">collect/config.py</div><div class="detail">URLs des API, clé WeatherAPI (.env), chemins de sortie, 13 stations (nom, latitude, longitude, altitude)</div></div>
-    </div>
-    <div class="chip-grid" style="max-width:none;">
-      <div class="chip">Reprise automatique sur erreur (Tenacity, 3 tentatives)</div>
-      <div class="chip">Journalisation</div>
-      <div class="chip">Fichiers .dat des capteurs terrain : fournis par le climatologue, hors automatisation</div>
-    </div>
-    <p class="caption-line">Scripts versionnés sur github.com/h3joseph/certification-</p>
-  </section>
-
-  <section class="slide slide--light">
-    <p class="kicker">Étape 2 · Collecte</p>
-    <h2 class="big">Automatisation : un cron par source</h2>
-    <div class="row" style="max-width:none;">
-      <div class="pair-card" style="max-width:420px;"><div class="label">Bibliothèque</div><div class="detail">APScheduler, classe BackgroundScheduler</div></div>
-      <div class="pair-card" style="max-width:420px;"><div class="label">Déclencheur</div><div class="detail">cron, hour=7 &mdash; chaque jour à 7h</div></div>
-      <div class="pair-card" style="max-width:420px;"><div class="label">Démarré depuis</div><div class="detail">api/main.py, fonction lifespan, au démarrage de l&rsquo;API</div></div>
-      <div class="pair-card" style="max-width:420px;"><div class="label">Un scheduler par source</div><div class="detail">Open-Meteo et WeatherAPI se déclenchent chacun indépendamment</div></div>
-    </div>
-    <div class="callout" style="max-width:none;">
-      <div class="headline">Sans intervention manuelle</div>
-      <div class="detail">La collecte se déclenche seule chaque jour à 7h, puis enchaîne directement sur le nettoyage et l&rsquo;insertion en base via etl/etl.py</div>
-    </div>
+    <p class="vflow-side">Hors automatisation : fichiers .dat terrain (climatologue)</p>
+    <p class="caption-line">github.com/h3joseph/certification-</p>
   </section>
 
   <section class="slide slide--light">
     <p class="kicker">Étape 2 · Pipeline ETL</p>
-    <h2 class="big">Cinq étapes, deux sorties</h2>
-    <div class="flow">
-      <span class="step">Lancement</span><span class="arrow">&#8594;</span>
-      <span class="step">Initialisation</span><span class="arrow">&#8594;</span>
-      <span class="step">Traitement</span><span class="arrow">&#8594;</span>
-      <span class="step">Erreurs</span><span class="arrow">&#8594;</span>
-      <span class="step">Sauvegarde</span>
+    <h2 class="big">Pipeline ETL</h2>
+    <div class="vflow">
+      <div class="vflow-node is-compact">Lancement</div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact">Initialisation</div>
+        <div class="vflow-annot">Dépendances, connexions</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact">Traitement</div>
+        <div class="vflow-annot">JSON &#8594; tableau structuré</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact" style="border:2px solid var(--orange);">Gestion des erreurs</div>
+        <div class="vflow-annot">Réseau &middot; serveur</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-node is-compact">Sauvegarde</div>
+      <div class="varrows" aria-hidden="true"><span class="varrow">&#8595;</span><span class="varrow">&#8595;</span></div>
+      <div class="vflow-row">
+        <div class="vflow-card">
+          <div class="title">Sortie CSV</div>
+          <div class="detail">Excel &middot; équipes terrain</div>
+        </div>
+        <div class="vflow-card">
+          <div class="title">Insertion PostgreSQL</div>
+          <div class="detail">Après nettoyage, via SQLAlchemy &middot; idempotente</div>
+        </div>
+      </div>
     </div>
-    <div class="callout">
-      <div class="headline">Traitement</div>
-      <div class="detail">La réponse JSON de l&rsquo;API est transformée en tableau structuré : champs renommés, point de rosée calculé par l&rsquo;approximation de Magnus, indicateur horaire de pluie</div>
-    </div>
-    <div class="flow" style="margin-top:.6rem;">
-      <span class="step">Tentative 1</span><span class="arrow">&#8594;</span>
-      <span class="step">échec, 5 s</span><span class="arrow">&#8594;</span>
-      <span class="step">Tentative 2</span><span class="arrow">&#8594;</span>
-      <span class="step">échec, 5 s</span><span class="arrow">&#8594;</span>
-      <span class="step">Tentative 3</span>
-    </div>
-    <p class="caption-line" style="margin-top:.5rem;">Bibliothèque Tenacity, sur erreur réseau ou serveur</p>
-    <div class="row" style="margin-top:.8rem;">
-      <div class="pair-card"><div class="label">Sortie CSV</div><div class="detail">Fichier horodaté par jour, encodage compatible Excel. Collecte quotidienne pour constituer l&rsquo;historique complet du benchmark</div></div>
-      <div class="pair-card"><div class="label">Sortie base</div><div class="detail">Insertion après nettoyage, via le pipeline ETL (pas d&rsquo;insertion brute directe depuis la collecte)</div></div>
+    <div class="tenacity-box">
+      <div class="headline">Reprise automatique &middot; Tenacity</div>
+      <div class="detail">Réseau ou serveur : 3 tentatives, 5 s d&rsquo;attente, sans intervention.</div>
     </div>
   </section>
 
