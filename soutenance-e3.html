@@ -418,6 +418,40 @@
     max-width:300px;
   }
 
+  /* Trois bulles (seuils d'alerte) */
+  .bubble-row{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:stretch;
+    gap:1.2rem;
+    width:100%;
+    max-width:760px;
+    margin-top:1.4rem;
+  }
+  .bubble{
+    flex:1 1 180px;
+    max-width:220px;
+    border-radius:48% / 20%;
+    padding:1.1rem 1.2rem;
+    color:#fff;
+    text-align:center;
+  }
+  .bubble--orange{ background:var(--orange-deep); }
+  .bubble--green{ background:var(--forest); }
+  .bubble--forest-deep{ background:var(--forest-deep); }
+  .bubble-title{
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:1.3rem;
+    margin-bottom:0.3rem;
+  }
+  .bubble-item{
+    font-size:0.82rem;
+    line-height:1.4;
+    opacity:0.95;
+  }
+
   .entity-grid{
     display:flex;
     flex-wrap:wrap;
@@ -1268,33 +1302,21 @@ etl\entrainement_modele.py            105      2    98%
   </section>
 
   <section class="slide slide--transition">
-    <p class="transition-line">Un modèle en production peut continuer à répondre vite tout en devenant, en silence, moins fiable.</p>
+    <p class="transition-line">Répondre vite et sans erreur ne veut pas dire répondre juste.</p>
     <p class="transition-next">Monitorer le modèle en continu</p>
   </section>
 
   <section class="slide slide--light">
     <p class="kicker">Monitoring · Modèle IA</p>
-    <h2 class="big">Une surveillance classique ne suffit pas</h2>
-    <p class="sub">Le climat évolue d&rsquo;une saison à l&rsquo;autre, un capteur terrain peut dériver, la correction de biais peut devenir moins précise sans aucune erreur technique visible. La surveillance classique (disponibilité, erreurs, temps de réponse) ne dit rien de la pertinence du résultat produit par le modèle.</p>
-    <div class="row">
-      <div class="pair-card"><div class="label">Prometheus</div><div class="detail">Récupère régulièrement des métriques exposées par les différents services du projet</div></div>
-      <div class="pair-card"><div class="label">Grafana</div><div class="detail">Transforme ces métriques en graphiques compréhensibles pour suivre l&rsquo;évolution du système</div></div>
+    <h2 class="big">Au-delà du technique : surveiller le modèle lui-même</h2>
+    <p class="sub">La surveillance classique (disponibilité, erreurs, temps de réponse) ne dit rien de la qualité du résultat produit par le modèle.</p>
+    <div class="chip-grid">
+      <div class="chip">Prometheus &middot; Grafana</div>
+      <div class="chip">6 cibles, toutes les 15 s</div>
+      <div class="chip">Erreur moyenne du modèle</div>
+      <div class="chip">Fraîcheur des données terrain</div>
     </div>
-    <div class="stats">
-      <div class="stat"><span class="num">6</span><span class="cap">Cibles surveillées</span></div>
-      <div class="stat"><span class="num">15 s</span><span class="cap">Intervalle d&rsquo;interrogation</span></div>
-    </div>
-    <p class="caption-line">API, dashboard, PostgreSQL, Prometheus lui-même, ressources système, conteneurs Docker</p>
-  </section>
-
-  <section class="slide slide--light">
-    <p class="kicker">Monitoring · Métriques</p>
-    <h2 class="big">Deux métriques que rien ne fournit automatiquement</h2>
-    <div class="row">
-      <div class="pair-card"><div class="label">Erreur moyenne du modèle</div><div class="detail">À chaque interrogation, un programme récupère les derniers résultats de la table des scores du benchmark ; les tables stations et sources apportent des noms lisibles plutôt que de simples identifiants</div></div>
-      <div class="pair-card"><div class="label">Fraîcheur des données terrain</div><div class="detail">Dernière remontée reçue par station, puis nombre d&rsquo;heures écoulées depuis. Un modèle ne peut pas être évalué correctement si les données terrain ne sont plus mises à jour</div></div>
-    </div>
-    <p class="caption-line">Recalculées à chaque interrogation, jamais mises en cache. Collecteurs chargés automatiquement dès le démarrage de l&rsquo;API &middot; code des collecteurs versionné sur <a href="https://github.com/h3joseph/certification-" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">github.com/h3joseph/certification-</a></p>
+    <p class="caption-line">Deux métriques personnalisées, recalculées à chaque interrogation, jamais mises en cache</p>
   </section>
 
   <section class="slide slide--light">
@@ -1316,20 +1338,22 @@ etl\entrainement_modele.py            105      2    98%
     <h2 class="big">Seize graphiques, trois seuils d&rsquo;alerte</h2>
     <div class="stats">
       <div class="stat"><span class="num forest">16</span><span class="cap">Graphiques Grafana</span></div>
-      <div class="stat"><span class="num">3</span><span class="cap">Seuils d&rsquo;alerte</span></div>
     </div>
-    <div class="chip-grid">
-      <div class="chip">Disponibilité API &amp; dashboard</div>
-      <div class="chip">Erreurs HTTP, latence</div>
-      <div class="chip">Connexions PostgreSQL</div>
-      <div class="chip">CPU, mémoire, disque, réseau</div>
-      <div class="chip">Heatmap erreur par station</div>
-      <div class="chip">Fraîcheur par station (tableau)</div>
+    <div class="bubble-row">
+      <div class="bubble bubble--orange">
+        <div class="bubble-title">40&deg;C</div>
+        <div class="bubble-item">Température</div>
+      </div>
+      <div class="bubble bubble--green">
+        <div class="bubble-title">50mm/24h</div>
+        <div class="bubble-item">Précipitations</div>
+      </div>
+      <div class="bubble bubble--forest-deep">
+        <div class="bubble-title">3&deg;C</div>
+        <div class="bubble-item">MAE du modèle</div>
+      </div>
     </div>
-    <div class="callout">
-      <div class="headline">Alertes vérifiées par des tests dédiés</div>
-      <div class="detail">Température &gt; 40&deg;C, précipitations &gt; 50mm/24h, MAE température &gt; 3&deg;C déclenchent une alerte avec niveau de gravité, message et horodatage. Exemple testé : 41&deg;C déclenche une alerte rouge, un MAE de 4&deg;C signale une dégradation. Visibles dans l&rsquo;onglet historique terrain</div>
-    </div>
+    <p class="caption-line">Alertes vérifiées par des tests dédiés, visibles dans l&rsquo;onglet historique terrain</p>
   </section>
 
   <section class="slide slide--demo">
@@ -1350,10 +1374,6 @@ etl\entrainement_modele.py            105      2    98%
     <p class="kicker">Bilan</p>
     <h2 class="big">Un cycle de vie couvert, un déploiement réel restant à faire</h2>
     <p class="sub" style="margin-top:1rem;">Une source de données ne suffit pas si elle n&rsquo;est pas rendue fiable et exploitable au quotidien. AIFS apporte déjà une prévision de qualité ; le correcteur de biais entraîné en propre affine cette fiabilité station par station. Le monitoring garantit que cette fiabilité ne se dégrade pas en silence.</p>
-    <div class="callout">
-      <div class="headline">Honnêteté sur ce qui reste à faire</div>
-      <div class="detail">Le déploiement effectif en environnement de production, dernière étape de ce cycle, reste à réaliser au-delà de ce qui a été construit et validé ici, cohérent avec un projet qui tourne aujourd&rsquo;hui en local et en conteneurs, sans hébergement distant</div>
-    </div>
   </section>
 
   <section class="slide slide--dark">
