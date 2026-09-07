@@ -104,8 +104,8 @@
     margin-top:1.3rem;
     line-height:1.5;
   }
-  .slide--dark .sub{ color:#CFE4D8; }
-  .slide--dark .caption-line{ color:#CFE4D8; }
+  .slide--dark .sub, .slide--demo .sub{ color:#CFE4D8; }
+  .slide--dark .caption-line, .slide--demo .caption-line{ color:#CFE4D8; }
 
   .signature{
     margin-top:3.2rem;
@@ -643,6 +643,9 @@
   .compare-table th{ background:var(--forest-deep); color:#fff; font-weight:700; padding:0.55rem 0.8rem; text-align:left; }
   .compare-table td{ padding:0.5rem 0.8rem; border-bottom:1px solid var(--line); color:var(--ink); text-align:left; }
   .compare-table tr.win td{ background:rgba(141,198,63,0.16); color:var(--forest-deep); font-weight:700; }
+  .slide--demo .compare-table th, .slide--dark .compare-table th{ background:rgba(255,255,255,0.1); }
+  .slide--demo .compare-table td, .slide--dark .compare-table td{ color:#EAF3EE; border-bottom-color:rgba(255,255,255,0.18); }
+  .slide--demo .compare-table tr.win td, .slide--dark .compare-table tr.win td{ background:rgba(141,198,63,0.28); color:var(--lime); }
 
   .criteria-list{
     list-style:none;
