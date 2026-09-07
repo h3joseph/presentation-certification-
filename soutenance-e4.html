@@ -1475,46 +1475,19 @@
     <p class="transition-next">Automatiser les tests et la livraison</p>
   </section>
 
-  <!-- C18: automatisation des tests, seuil de couverture -->
+  <!-- C18-C19: tests, couverture et livraison, automatises -->
   <section class="slide slide--light">
-    <p class="kicker">Intégration continue</p>
-    <h2 class="big">Un déclenchement systématique, à chaque envoi de code</h2>
-    <div class="chip-grid">
-      <div class="chip">Unitaires</div>
-      <div class="chip">Qualité / style</div>
-      <div class="chip">Intégration</div>
-      <div class="chip">Contrat API</div>
-      <div class="chip">Performance</div>
-      <div class="chip">Bout en bout</div>
-    </div>
-    <p class="caption-line">6 niveaux, détaillés en Épreuve 3 : ici, ils couvrent l&rsquo;ensemble de l&rsquo;application, pas seulement le modèle</p>
-  </section>
-
-  <!-- C18: seuil de couverture -->
-  <section class="slide slide--light">
-    <p class="kicker">Intégration continue</p>
-    <h2 class="big">Un seuil de couverture qui bloque le code faible</h2>
+    <p class="kicker">Intégration &amp; livraison continues</p>
+    <h2 class="big">Tests, couverture et livraison, automatisés</h2>
     <div class="stats">
+      <div class="stat"><span class="num">6</span><span class="cap">Niveaux de tests (détail Épreuve 3)</span></div>
       <div class="stat"><span class="num">80%</span><span class="cap">Couverture minimale exigée</span></div>
     </div>
-    <p class="caption-line">Sous ce seuil, les changements sont refusés automatiquement</p>
-    <p class="caption-line">Fichier ci.yml versionné sur github.com/h3joseph/certification-</p>
-  </section>
-
-  <!-- C19: packaging, environnements, livraison continue -->
-  <section class="slide slide--light">
-    <p class="kicker">Livraison continue</p>
-    <h2 class="big">Du code testé à une image livrable</h2>
-    <div class="row">
-      <div class="pair-card"><div class="label">Image construite</div><div class="detail">Conteneur démarré réellement, connexion testée jusqu&rsquo;à réponse ou délai dépassé</div></div>
-      <div class="pair-card"><div class="label">Analyse de vulnérabilités</div><div class="detail">Avant d&rsquo;être considérée comme prête</div></div>
-    </div>
-    <div class="ci-jobs">
+    <div class="ci-jobs" style="margin-top:1.6rem;">
       <div class="ci-job"><span class="ci-status success">&#10003;</span><span class="ci-name">[Deploy] Production (branche main)</span><span class="ci-time">2s</span></div>
       <div class="ci-job"><span class="ci-status skipped">&#8709;</span><span class="ci-name">[Deploy] Staging (branche develop)</span><span class="ci-time">skipped</span></div>
     </div>
-    <p class="caption-line">Un push sur la branche associée déclenche automatiquement la livraison vers l&rsquo;environnement correspondant</p>
-    <p class="caption-line">Configuration versionnée sur github.com/h3joseph/certification-</p>
+    <p class="caption-line">Un push sur la branche associée déclenche la livraison vers l&rsquo;environnement correspondant &middot; ci.yml versionné sur github.com/h3joseph/certification-</p>
   </section>
 
   <section class="slide slide--dark">

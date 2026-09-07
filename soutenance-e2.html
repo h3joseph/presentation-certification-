@@ -1135,29 +1135,18 @@
   <!-- C8: service configuré correctement, répond aux besoins fonctionnels et contraintes techniques -->
   <section class="slide slide--light">
     <p class="kicker">Configuration</p>
-    <h2 class="big">Un modèle nommé plutôt qu&rsquo;un mode automatique</h2>
-    <div class="row">
-      <div class="pair-card"><div class="label">Mode automatique écarté</div><div class="detail">Sélectionne un modèle sans le nommer</div></div>
-      <div class="pair-card"><div class="label">Paramètre explicite retenu</div><div class="detail">Cible le modèle IA identifié pendant la veille : AIFS</div></div>
-    </div>
-    <div class="callout">
-      <div class="headline">Traçabilité</div>
-      <div class="detail">Ce choix est documenté dans le code et dans la documentation technique du projet, pour que toute personne reprenant le projet puisse vérifier quel modèle est réellement interrogé. Aucune clé d&rsquo;authentification n&rsquo;est requise pour accéder au service</div>
-    </div>
-  </section>
-
-  <section class="slide slide--light">
-    <p class="kicker">Configuration</p>
-    <h2 class="big">Un horizon utile, pas un horizon maximal</h2>
+    <h2 class="big">Un modèle nommé, un horizon utile</h2>
     <div class="stats">
-      <div class="stat"><span class="num forest">3</span><span class="cap">Jours de prévision exposés (J0 à J+3)</span></div>
-      <div class="stat"><span class="num">7</span><span class="cap">Jours demandés à l&rsquo;API, la limite maximale</span></div>
+      <div class="stat"><span class="num forest">3</span><span class="cap">Jours exposés (J0 à J+3)</span></div>
+      <div class="stat"><span class="num">7</span><span class="cap">Jours max. disponibles à l&rsquo;API</span></div>
     </div>
-    <p class="caption-line">Au-delà de J+3, une prévision perd rapidement en fiabilité et n&rsquo;apporte plus grand-chose à une décision agronomique concrète</p>
-    <div class="row">
-      <div class="pair-card"><div class="label">Pas de temps horaire</div><div class="detail">Correspond à la granularité des mesures collectées par les stations au sol</div></div>
-      <div class="pair-card"><div class="label">Fuseau horaire automatique</div><div class="detail">Chaque station reçoit ses prévisions dans son propre fuseau local, sans conversion manuelle</div></div>
+    <div class="chip-grid" style="margin-top:1.6rem;">
+      <div class="chip">Modèle nommé : AIFS</div>
+      <div class="chip">Pas de mode automatique</div>
+      <div class="chip">Pas de temps horaire</div>
+      <div class="chip">Fuseau horaire automatique</div>
     </div>
+    <p class="caption-line">Au-delà de J+3, une prévision perd rapidement en fiabilité pour une décision agronomique</p>
   </section>
 
   <section class="slide slide--light">

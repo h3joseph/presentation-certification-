@@ -337,6 +337,76 @@
     color:var(--forest-deep);
   }
 
+  /* Schema vertical (chaine CI/CD condensee) */
+  .vflow{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    max-width:720px;
+    margin:0.9rem auto 0;
+  }
+  .vflow-with-annot{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:0.9rem;
+    width:100%;
+  }
+  .vflow-node{
+    display:flex;
+    flex-direction:column;
+    gap:0.1rem;
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:clamp(0.92rem,1.5vw,1.1rem);
+    background:var(--forest);
+    color:#fff;
+    padding:0.5rem 1.3rem;
+    border-radius:999px;
+    text-align:center;
+    line-height:1.2;
+  }
+  .vflow-node.is-end{ background:var(--forest-deep); }
+  .vflow-node-sub{ font-weight:500; font-size:0.68rem; opacity:.85; }
+  .vflow-annot{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid var(--lime-deep);
+    border-radius:0 8px 8px 0;
+    padding:0.5rem 0.9rem;
+    max-width:340px;
+    text-align:left;
+    font-size:0.78rem;
+    line-height:1.3;
+    color:var(--ink-soft);
+  }
+  .vflow-annot.is-wide{ max-width:600px; width:100%; text-align:center; }
+  .vflow-annot strong{ color:var(--forest-deep); }
+  .varrows{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+    max-width:480px;
+    margin:0.2rem 0;
+  }
+  .varrows.single{ grid-template-columns:1fr; max-width:120px; }
+  .varrows.chain{ margin:0.06rem 0; }
+  .varrows.chain .varrow{ font-size:0.95rem; }
+  .varrow{ text-align:center; color:var(--lime-deep); font-size:1.3rem; line-height:1; }
+  .vflow-node.is-compact{
+    padding:0.3rem 1rem;
+    font-size:0.82rem;
+  }
+  .vflow-with-annot.is-compact{ gap:0.7rem; }
+  .vflow-with-annot.is-compact .vflow-annot{
+    padding:0.3rem 0.75rem;
+    font-size:0.72rem;
+    line-height:1.25;
+    max-width:300px;
+  }
+
   .entity-grid{
     display:flex;
     flex-wrap:wrap;
@@ -923,37 +993,41 @@
   </section>
 
   <section class="slide slide--light">
-    <p class="kicker">CI/CD · Étape 1</p>
-    <h2 class="big">Qualité du code et sécurité des dépendances</h2>
-    <div class="row">
-      <div class="pair-card"><div class="label">Style et conventions</div><div class="detail">Vérifie que les règles de style sont respectées : code plus simple à lire et à maintenir</div></div>
-      <div class="pair-card"><div class="label">Audit des dépendances</div><div class="detail">Analyse les bibliothèques externes pour identifier d&rsquo;éventuelles vulnérabilités connues</div></div>
+    <p class="kicker">CI/CD · Les cinq étapes</p>
+    <h2 class="big">De la qualité du code au déploiement</h2>
+    <div class="vflow">
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact">1 · Qualité &amp; sécurité</div>
+        <div class="vflow-annot">Style du code &middot; dépendances vulnérables</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact">2 · Tests</div>
+        <div class="vflow-annot">5 familles indépendantes, en parallèle</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact" style="border:2px solid var(--orange);">3 · Modèle IA</div>
+        <div class="vflow-annot">2 contrôles complémentaires, détaillés ensuite</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact">4 · Docker</div>
+        <div class="vflow-annot">Image standardisée &middot; scan Trivy</div>
+      </div>
+      <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
+      <div class="vflow-with-annot is-compact">
+        <div class="vflow-node is-compact">5 · Déploiement</div>
+        <div class="vflow-annot">Selon la branche : staging ou production</div>
+      </div>
     </div>
-    <div class="callout">
-      <div class="headline">Une faille tierce reste un risque</div>
-      <div class="detail">Même si le code du projet est correct, une vulnérabilité dans une bibliothèque externe est un risque réel. Plusieurs outils sont regroupés ici, certains bloquants, d&rsquo;autres uniquement informatifs</div>
+    <div class="stats" style="margin-top:1.4rem;">
+      <div class="stat"><span class="num">14</span><span class="cap">Tâches automatiques</span></div>
     </div>
   </section>
 
   <section class="slide slide--light">
-    <p class="kicker">CI/CD · Étape 2</p>
-    <h2 class="big">Des tests exécutés en parallèle</h2>
-    <div class="chip-grid">
-      <div class="chip">Unitaires</div>
-      <div class="chip">Qualité des données</div>
-      <div class="chip">Intégration</div>
-      <div class="chip">Contrat</div>
-      <div class="chip">Performance</div>
-    </div>
-    <div class="callout">
-      <div class="headline">Indépendants, donc parallélisables</div>
-      <div class="detail">Ces cinq types de tests sont indépendants les uns des autres : les exécuter en parallèle réduit considérablement le temps total de validation</div>
-    </div>
-    <p class="caption-line">Détail des six niveaux de la pyramide de tests dans la partie suivante</p>
-  </section>
-
-  <section class="slide slide--light">
-    <p class="kicker">CI/CD · Étape 3</p>
+    <p class="kicker">CI/CD · Étape 3, en détail</p>
     <h2 class="big">Le modèle ne peut pas être réentraîné à chaque changement</h2>
     <p class="sub" style="margin-top:1rem;">Les données d&rsquo;entraînement sont volumineuses et volontairement absentes du dépôt Git. Réentraîner un modèle complet à chaque modification, même sans lien avec l&rsquo;IA, serait inutilement coûteux.</p>
     <div class="row">
@@ -963,32 +1037,6 @@
     <div class="callout">
       <div class="headline">Deux contrôles complémentaires</div>
       <div class="detail">Le premier garantit que le cycle d&rsquo;entraînement reste fonctionnel, le second que le modèle en service reste performant. Si l&rsquo;un des deux échoue, la chaîne s&rsquo;arrête : rien n&rsquo;est déployé</div>
-    </div>
-  </section>
-
-  <section class="slide slide--light">
-    <p class="kicker">CI/CD · Étape 4</p>
-    <h2 class="big">Préparation standardisée avec Docker</h2>
-    <div class="row">
-      <div class="pair-card"><div class="label">Image Docker</div><div class="detail">Construite à partir du code source : l&rsquo;application et toutes ses dépendances dans un environnement reproductible</div></div>
-      <div class="pair-card"><div class="label">Trivy</div><div class="detail">Compare les composants de l&rsquo;image à des bases de données de sécurité régulièrement mises à jour</div></div>
-    </div>
-    <p class="caption-line">Identifier une faille connue avant le déploiement, jamais après</p>
-  </section>
-
-  <section class="slide slide--light">
-    <p class="kicker">CI/CD · Étape 5</p>
-    <h2 class="big">Déploiement selon la branche</h2>
-    <div class="row">
-      <div class="pair-card"><div class="label">Branche de développement</div><div class="detail">Déployée vers un environnement de staging pour vérifications supplémentaires en conditions proches du réel</div></div>
-      <div class="pair-card"><div class="label">Branche principale</div><div class="detail">Déployée vers l&rsquo;environnement de production</div></div>
-    </div>
-    <div class="stats">
-      <div class="stat"><span class="num">14</span><span class="cap">Tâches automatiques</span></div>
-    </div>
-    <div class="callout">
-      <div class="headline">Un mécanisme de sécurité global</div>
-      <div class="detail">Cette séparation limite fortement le risque qu&rsquo;une erreur atteigne directement les utilisateurs. Aucune version insuffisamment testée, vulnérable ou dégradée ne peut être déployée sans être détectée</div>
     </div>
   </section>
 
