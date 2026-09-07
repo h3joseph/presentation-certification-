@@ -1228,15 +1228,6 @@
     <p class="caption-line">Mesures issues directement des capteurs installés sur chaque station</p>
   </section>
 
-  <section class="slide slide--demo">
-    <p class="kicker">Démonstration en direct &middot; Dashboard</p>
-    <h2 class="demo-title">Prévisions et historique terrain, vraiment en ligne</h2>
-    <ul class="demo-list">
-      <li><a href="http://localhost:8050" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:flex;justify-content:space-between;gap:0.6rem;">Dashboard &middot; Prévisions, Historique terrain <span style="color:var(--lime);">localhost:8050 &#8594;</span></a></li>
-    </ul>
-    <p class="caption-line" style="color:#CFE4D8;">L&rsquo;onglet Modèle IA a déjà été montré en direct à l&rsquo;Épreuve 3 &middot; lien actif seulement si la stack Docker tourne en local</p>
-  </section>
-
   <!-- C14: wireframe - vue Modèle IA -->
   <section class="slide slide--light">
     <p class="kicker">Parcours utilisateur</p>
@@ -1258,6 +1249,15 @@
         <div class="wf-row"><div class="wf-block tall">Détail heure par heure (tableau)</div></div>
       </div>
     </div>
+  </section>
+
+  <section class="slide slide--demo">
+    <p class="kicker">Démonstration en direct &middot; Dashboard</p>
+    <h2 class="demo-title">Prévisions et historique terrain, vraiment en ligne</h2>
+    <ul class="demo-list">
+      <li><a href="http://localhost:8050" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:flex;justify-content:space-between;gap:0.6rem;">Dashboard &middot; Prévisions, Historique terrain <span style="color:var(--lime);">localhost:8050 &#8594;</span></a></li>
+    </ul>
+    <p class="caption-line" style="color:#CFE4D8;">L&rsquo;onglet Modèle IA a déjà été montré en direct à l&rsquo;Épreuve 3 &middot; lien actif seulement si la stack Docker tourne en local</p>
   </section>
 
   <!-- C14: parcours utilisateur - navigation libre entre vues -->
@@ -1328,31 +1328,9 @@
   <!-- C15: transverses au pipeline - supervision et CI/CD -->
   <section class="slide slide--light">
     <p class="kicker">Cadre technique</p>
-    <h2 class="big">Deux couches transverses à tout le pipeline</h2>
-    <div class="cross-band"><b>Supervision technique :</b> Prometheus / Grafana interroge en continu la base, l&rsquo;API et l&rsquo;interface</div>
-    <div class="cross-band cicd"><b>CI/CD :</b> chaque changement, collecte, nettoyage, API, interface ou modèle, passe par la même chaîne automatisée</div>
-  </section>
-
-  <!-- C15: preuve de concept accessible en pré-production + conclusion -->
-  <section class="slide slide--light">
-    <p class="kicker">Cadre technique</p>
-    <h2 class="big">Une preuve de concept vérifiée, pas juste affirmée</h2>
-    <div class="terminal">
-      <div class="line"><span class="lvl info">OK</span><span class="msg">curl localhost:8000/health &rarr; statut ok, 13 stations actives, scheduler actif</span></div>
-      <div class="line"><span class="lvl info">OK</span><span class="msg">curl localhost:8050 &rarr; HTTP 200 (dashboard)</span></div>
-      <div class="line"><span class="lvl info">OK</span><span class="msg">curl localhost:9090/-/healthy &rarr; HTTP 200 (Prometheus)</span></div>
-      <div class="line"><span class="lvl info">OK</span><span class="msg">curl localhost:3000/api/health &rarr; database ok (Grafana)</span></div>
-      <div class="line"><span class="lvl info">OK</span><span class="msg">flake8 &rarr; 0 erreur &middot; pytest &rarr; 210 tests passants</span></div>
-    </div>
-    <p class="caption-line">docs/rapport_docker.md &mdash; session du 26/06 puis du 02/07/2026, cinq services démarrés ensemble et vérifiés un par un</p>
-    <div class="row" style="margin-top:1.6rem;">
-      <div class="pair-card"><div class="label">Préproduction / production</div><div class="detail">Deux branches, deux jobs de déploiement configurés et testés dans la CI/CD</div></div>
-      <div class="pair-card"><div class="label">Hébergement distant</div><div class="detail">Pas encore réalisé : accès à l&rsquo;infrastructure CIFOR-ICRAF non autorisé, application fonctionnelle en local</div></div>
-    </div>
-    <div class="callout">
-      <div class="headline">Conclusion : prêt à continuer</div>
-      <div class="detail">Cinq services démarrés ensemble, tous vérifiés sains, code sans erreur de style, 210 tests qui passent : les conditions techniques sont réunies pour ouvrir l&rsquo;application à un public plus large, reste l&rsquo;autorisation d&rsquo;hébergement distant, hors de mon contrôle</div>
-    </div>
+    <h2 class="big">Deux vérifications tournent en permanence, sur tout le projet</h2>
+    <div class="cross-band"><b>Surveillance :</b> Prometheus et Grafana observent en continu l&rsquo;état de la base, de l&rsquo;API et de l&rsquo;interface</div>
+    <div class="cross-band cicd"><b>Tests automatiques :</b> chaque modification du code, quelle qu&rsquo;elle soit, est vérifiée avant d&rsquo;être mise en service</div>
   </section>
 
   <section class="slide slide--demo">
