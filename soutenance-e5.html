@@ -960,31 +960,17 @@
   <!-- C20: cibles surveillées, outillage opérationnel -->
   <section class="slide slide--light">
     <p class="kicker">Dispositif de surveillance</p>
-    <h2 class="big">Six cibles surveillées</h2>
-    <div class="chip-grid">
+    <h2 class="big">Six cibles, une seule commande</h2>
+    <p class="code-label">docker compose up -d</p>
+    <div class="chip-grid" style="margin-top:0.8rem;">
       <div class="chip">API</div>
       <div class="chip">Dashboard</div>
       <div class="chip">Base de données</div>
       <div class="chip">Infrastructure système</div>
       <div class="chip">Conteneurs</div>
-      <div class="chip">Outil de supervision lui-même</div>
+      <div class="chip">Supervision elle-même</div>
     </div>
-    <p class="caption-line">La supervision se vérifie aussi contre sa propre configuration</p>
-  </section>
-
-  <!-- C20: documentation d'installation et de configuration de l'outillage -->
-  <section class="slide slide--light">
-    <p class="kicker">Dispositif de surveillance</p>
-    <h2 class="big">Une seule commande pour tout démarrer</h2>
-    <pre class="code" style="text-align:left;max-width:640px;font-size:0.85rem;"><code>docker compose up -d</code></pre>
-    <div class="chip-grid" style="margin-top:1.6rem;">
-      <div class="chip">prometheus &middot; port 9090</div>
-      <div class="chip">grafana &middot; port 3001</div>
-      <div class="chip">postgres-exporter &middot; port 9187</div>
-      <div class="chip">node-exporter &middot; port 9100</div>
-      <div class="chip">cadvisor &middot; port 8080</div>
-    </div>
-    <p class="caption-line">docs/monitoring.md &mdash; aucune étape manuelle supplémentaire : tableau de bord Grafana provisionné automatiquement, cibles Prometheus définies dans monitoring/prometheus.yml</p>
+    <p class="caption-line">Prometheus, Grafana et trois exporters &middot; provisionnement automatique, aucune étape manuelle</p>
   </section>
 
   <!-- C20: métriques mesurées -->
