@@ -997,88 +997,34 @@
     <p class="caption-line">4 rôles réels identifiés avec le maître de stage : chercheur, agronome terrain, agriculteur, administrateur système</p>
   </section>
 
-  <!-- C14: user stories - rôle chercheur -->
+  <!-- C14: user stories - un exemple par role, sur une seule page -->
   <section class="slide slide--light">
     <p class="kicker">Analyse du besoin</p>
-    <h2 class="big">Le chercheur</h2>
+    <h2 class="big">Un exemple par rôle</h2>
     <div class="story-grid">
       <div class="story-card" data-role="chercheur">
-        <div class="story-role">Planifier ses missions</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>consulter les prévisions d&rsquo;une station sur les 3 prochains jours</p>
+        <div class="story-role">Le chercheur &middot; planifier ses missions</div>
+        <p class="story-line"><span class="story-tag">Je veux</span>consulter les prévisions d&rsquo;une station</p>
         <p class="story-line"><span class="story-tag">Afin de</span>planifier ses missions terrain</p>
-        <p class="story-line"><span class="story-tag">Critère</span>chaque station identifiable sans dépendre uniquement de la couleur, étiquette lisible par un lecteur d&rsquo;écran</p>
+        <p class="story-line"><span class="story-tag">Critère</span>GET /v1/previsions expose l&rsquo;horizon de prévision, rafraîchi automatiquement chaque jour à 7h</p>
       </div>
-      <div class="story-card" data-role="chercheur">
-        <div class="story-role">Vérifier la fiabilité</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>comparer les prévisions de la veille aux mesures réelles</p>
-        <p class="story-line"><span class="story-tag">Afin de</span>vérifier que la source météo reste fiable dans le temps</p>
-        <p class="story-line"><span class="story-tag">Critère</span>l&rsquo;alerte n&rsquo;est jamais signalée par la couleur rouge seule : un texte ou une icône l&rsquo;accompagne</p>
-      </div>
-      <div class="story-card" data-role="chercheur">
-        <div class="story-role">Analyser des tendances</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>interroger les données historiques terrain sur une période donnée</p>
-        <p class="story-line"><span class="story-tag">Afin de</span>analyser des tendances climatiques</p>
-        <p class="story-line"><span class="story-tag">Critère</span>filtres station/période entièrement utilisables au clavier</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- C14: user stories - rôle agronome terrain -->
-  <section class="slide slide--light">
-    <p class="kicker">Analyse du besoin</p>
-    <h2 class="big">L&rsquo;agronome terrain</h2>
-    <div class="story-grid">
       <div class="story-card" data-role="agronome">
-        <div class="story-role">Protéger les cultures</div>
+        <div class="story-role">L&rsquo;agronome terrain &middot; protéger les cultures</div>
         <p class="story-line"><span class="story-tag">Je veux</span>être alerté si T &gt; 40°C ou précipitations &gt; 50mm/24h</p>
         <p class="story-line"><span class="story-tag">Afin de</span>protéger les cultures</p>
-        <p class="story-line"><span class="story-tag">Critère</span>chaque alerte doublée d&rsquo;un texte explicite, jamais seulement d&rsquo;une couleur ou d&rsquo;une icône</p>
+        <p class="story-line"><span class="story-tag">Critère</span>seuils d&rsquo;alerte fixés à 40°C et 50mm/24h, réévalués à chaque nouvelle collecte automatisée</p>
       </div>
-      <div class="story-card" data-role="agronome">
-        <div class="story-role">Choisir la bonne source</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>savoir quelle source météo est la plus précise pour sa région</p>
-        <p class="story-line"><span class="story-tag">Afin de</span>lui faire confiance avant de l&rsquo;utiliser</p>
-        <p class="story-line"><span class="story-tag">Critère</span>verdict textuel directement lisible par un lecteur d&rsquo;écran</p>
-      </div>
-      <div class="story-card" data-role="agronome">
-        <div class="story-role">Une prévision corrigée</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>une prévision ajustée par apprentissage automatique, plutôt qu&rsquo;une prévision brute</p>
-        <p class="story-line"><span class="story-tag">Afin de</span>tenir compte des écarts déjà observés sur le terrain</p>
-        <p class="story-line"><span class="story-tag">Critère</span>gain de précision aussi donné en valeur chiffrée, pas seulement par la position des courbes</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- C14: user stories - rôle agriculteur -->
-  <section class="slide slide--light">
-    <p class="kicker">Analyse du besoin</p>
-    <h2 class="big">L&rsquo;agriculteur</h2>
-    <div class="story-grid">
       <div class="story-card" data-role="agriculteur">
-        <div class="story-role">Une prévision simple</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>une prévision compréhensible pour sa zone, sans interpréter de données techniques</p>
+        <div class="story-role">L&rsquo;agriculteur &middot; une prévision simple</div>
+        <p class="story-line"><span class="story-tag">Je veux</span>une prévision compréhensible, sans données techniques à interpréter</p>
         <p class="story-line"><span class="story-tag">Afin de</span>décider du bon moment pour semer, arroser ou récolter</p>
-        <p class="story-line"><span class="story-tag">Critère</span>pictogramme toujours accompagné d&rsquo;un texte équivalent, jamais affiché seul</p>
+        <p class="story-line"><span class="story-tag">Critère</span>résultat affiché en pictogramme + texte simple (ensoleillé/pluvieux), aucune valeur brute à interpréter</p>
       </div>
-      <div class="story-card" data-role="agriculteur">
-        <div class="story-role">Être prévenu à temps</div>
-        <p class="story-line"><span class="story-tag">Je veux</span>être prévenu clairement en cas de risque de pluie forte ou de sécheresse</p>
-        <p class="story-line"><span class="story-tag">Afin de</span>adapter son activité à temps</p>
-        <p class="story-line"><span class="story-tag">Critère</span>alerte perceptible sans dépendre uniquement d&rsquo;une couleur, texte clair toujours présent</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- C14: user stories - rôle administrateur système -->
-  <section class="slide slide--light">
-    <p class="kicker">Analyse du besoin</p>
-    <h2 class="big">L&rsquo;administrateur système</h2>
-    <div class="story-grid">
       <div class="story-card" data-role="admin">
-        <div class="story-role">Garder le pipeline sous contrôle</div>
+        <div class="story-role">L&rsquo;administrateur système &middot; garder le pipeline sous contrôle</div>
         <p class="story-line"><span class="story-tag">Je veux</span>surveiller la latence de l&rsquo;API et la fraîcheur des données</p>
         <p class="story-line"><span class="story-tag">Afin de</span>détecter rapidement une panne de collecte</p>
-        <p class="story-line"><span class="story-tag">Critère</span>seuils d&rsquo;alerte Grafana lisibles sans dépendre uniquement de la couleur des courbes</p>
+        <p class="story-line"><span class="story-tag">Critère</span>dashboard Grafana avec seuils visuels (vert/jaune/rouge) sur la disponibilité des services et la latence</p>
       </div>
     </div>
     <div class="callout">
