@@ -1281,39 +1281,6 @@ CREATE TABLE mesure_reelle (
     <p class="caption-line">Utilité aujourd&rsquo;hui : alimente le WebSocket /live et l&rsquo;onglet Prévisions du dashboard</p>
   </section>
 
-  <section class="slide slide--light">
-    <p class="kicker">Étape 2 · Pipeline ETL</p>
-    <h2 class="big">Même logique pour une route GET</h2>
-    <div class="row" style="align-items:flex-start; max-width:none; gap:2rem;">
-      <div style="flex:1 1 440px; text-align:left;">
-        <p class="code-label">database/queries.sql &middot; Requête 1</p>
-        <pre class="code"><code><span class="fn">SELECT</span>
-    s.nom AS station, mr.timestamp, mr.temperature,
-    mr.humidite_relative, mr.precipitation, mr.vitesse_vent
-<span class="fn">FROM</span> mesure_reelle mr
-<span class="fn">JOIN</span> station s ON s.id_station = mr.id_station
-<span class="fn">WHERE</span> s.nom = :nom_station
-    <span class="fn">AND</span> mr.timestamp BETWEEN :date_debut AND :date_fin
-<span class="fn">ORDER BY</span> mr.timestamp ASC</code></pre>
-      </div>
-      <div style="flex:1 1 440px; text-align:left;">
-        <p class="code-label">api/routes/historique.py &middot; équivalent ORM</p>
-        <pre class="code"><code>query = <span class="fn">db.query</span>(MesureReelle, Station)
-    .<span class="fn">join</span>(Station, MesureReelle.id_station == Station.id_station)
-    .<span class="fn">filter</span>(MesureReelle.id_station == station_obj.id_station,
-            MesureReelle.timestamp &gt;= date_debut,
-            MesureReelle.timestamp &lt;= date_fin)
-    .<span class="fn">order_by</span>(MesureReelle.timestamp.asc())</code></pre>
-      </div>
-    </div>
-    <p class="caption-line">:nom_station, :date_debut, :date_fin &mdash; les paramètres reçus par la route GET /v1/historique. Correspondance directe : WHERE/AND &rarr; .filter(), JOIN &rarr; .join(), ORDER BY &rarr; .order_by() &mdash; en production la station est optionnelle (404 si fournie et introuvable) et une limite de 1000 lignes est appliquée</p>
-    <div class="chip-grid" style="margin-top:1.2rem; max-width:none;">
-      <div class="chip">idx_reelle_station_timestamp<br>mesure_reelle (id_station, timestamp)</div>
-      <div class="chip">idx_prevision_station_date<br>mesure_prevision (id_station, date, heure)</div>
-      <div class="chip">idx_score_station_source_date<br>score (id_station, id_source, date_calcul)</div>
-    </div>
-  </section>
-
   <section class="slide slide--transition">
     <p class="transition-line">Reste à rendre ces données accessibles à tous.</p>
     <p class="transition-next">Développer une API REST</p>
