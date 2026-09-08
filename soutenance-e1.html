@@ -1205,7 +1205,7 @@ CREATE TABLE mesure_reelle (
   <section class="slide slide--light">
     <p class="kicker">Étape 2 · Pipeline ETL</p>
     <h2 class="big">Deux exemples réels avec l&rsquo;ORM SQLAlchemy</h2>
-    <p class="code-label">Historique d&rsquo;une station &middot; api/routes/historique.py</p>
+    <p class="code-label">Historique d&rsquo;une station &middot; GET /v1/historique</p>
     <pre class="code"><code>query = (
     db.<span class="fn">query</span>(MesureReelle, Station)
     .<span class="fn">join</span>(Station, MesureReelle.id_station == Station.id_station)
@@ -1214,7 +1214,7 @@ CREATE TABLE mesure_reelle (
 )</code></pre>
     <p class="caption-line">Utilité : consulter les mesures réelles d&rsquo;une station sur une période choisie</p>
 
-    <p class="code-label" style="margin-top:1.9rem;">Classement des stations &middot; api/routes/scores.py</p>
+    <p class="code-label" style="margin-top:1.9rem;">Classement des stations &middot; GET /v1/scores</p>
     <pre class="code"><code>query = (
     db.<span class="fn">query</span>(Score, Station, Source)
     .<span class="fn">join</span>(Station, Station.id_station == Score.id_station)
