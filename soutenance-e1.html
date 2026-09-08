@@ -1130,32 +1130,31 @@ CREATE TABLE mesure_reelle (
   <section class="slide slide--light">
     <p class="kicker">Étape 2 · Collecte</p>
     <h2 class="big">Un second flux : les fichiers terrain (.dat)</h2>
-    <p class="sub" style="max-width:58ch;">Contrairement à Open-Meteo et WeatherAPI (appels API JSON automatisés), les capteurs Campbell CR1000X installés sur le terrain suivent un chemin différent : dépôt de fichier, puis traitement entièrement automatique une fois le pipeline lancé.</p>
     <div class="vflow">
-      <div class="vflow-with-annot is-compact">
-        <div class="vflow-node is-compact">
+      <div class="vflow-with-annot">
+        <div class="vflow-node">
           <span>Dépôt manuel</span>
           <span class="vflow-node-sub">climatologue</span>
         </div>
-        <div class="vflow-annot">Fichiers .dat Campbell CR1000X déposés dans le dossier terrain &middot; hors scheduler, aucun déclenchement automatique</div>
+        <div class="vflow-annot">Fichiers .dat dans le dossier terrain &middot; hors scheduler</div>
       </div>
       <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
-      <div class="vflow-with-annot is-compact">
-        <div class="vflow-node is-compact">Lancement du pipeline</div>
-        <div class="vflow-annot"><code>python pipeline.py</code> &middot; une seule commande, déclenchée manuellement</div>
+      <div class="vflow-with-annot">
+        <div class="vflow-node">Lancement du pipeline</div>
+        <div class="vflow-annot"><code>python pipeline.py</code> &middot; déclenché manuellement</div>
       </div>
       <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
-      <div class="vflow-with-annot is-compact">
-        <div class="vflow-node is-compact">Traitement automatique</div>
-        <div class="vflow-annot">Tous les fichiers .dat du dossier sont lus automatiquement (charger_terrain) &middot; 4 lignes de métadonnées ignorées, colonnes Campbell renommées</div>
+      <div class="vflow-with-annot">
+        <div class="vflow-node">Traitement automatique</div>
+        <div class="vflow-annot">Tous les fichiers du dossier sont lus automatiquement</div>
       </div>
       <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
-      <div class="vflow-with-annot is-compact">
-        <div class="vflow-node is-compact">Envoi vers l&rsquo;ETL &middot; nettoyage</div>
-        <div class="vflow-annot">clean_dataframe(source=&quot;terrain&quot;) : doublons (station, timestamp) supprimés, station Guitry exclue (complétude 58,44&nbsp;%), plages réalistes appliquées</div>
+      <div class="vflow-with-annot">
+        <div class="vflow-node">Envoi vers l&rsquo;ETL &middot; nettoyage</div>
+        <div class="vflow-annot">Doublons supprimés, plages réalistes appliquées</div>
       </div>
       <div class="varrows single chain" aria-hidden="true"><span class="varrow">&#8595;</span></div>
-      <div class="vflow-node is-end">Chargement &middot; insertion dans mesure_reelle</div>
+      <div class="vflow-node is-end">Chargement &middot; mesure_reelle</div>
     </div>
     <p class="caption-line">etl/etl.py &middot; charger_terrain(), load_dat(), clean_dataframe(source=&quot;terrain&quot;), inserer_mesures_reelles() &mdash; idempotente comme le flux API</p>
   </section>
