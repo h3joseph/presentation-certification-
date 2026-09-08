@@ -1264,13 +1264,17 @@ CREATE TABLE mesure_reelle (
     <span class="fn">AND</span> mr.timestamp BETWEEN :date_debut AND :date_fin
 <span class="fn">ORDER BY</span> mr.timestamp ASC</code></pre>
       </div>
-      <div style="flex:1 1 360px; text-align:left; font-size:0.95rem; color:var(--ink-soft);">
-        <p>&#8594; <strong>WHERE s.nom = :nom_station</strong> : filtre sur la station demandée</p>
-        <p>&#8594; <strong>BETWEEN :date_debut AND :date_fin</strong> : filtre sur la période demandée</p>
-        <p>&#8594; <strong>ORDER BY timestamp ASC</strong> : remis dans l&rsquo;ordre chronologique</p>
+      <div style="flex:1 1 440px; text-align:left;">
+        <p class="code-label">api/routes/historique.py &middot; équivalent ORM</p>
+        <pre class="code"><code>query = <span class="fn">db.query</span>(MesureReelle, Station)
+    .<span class="fn">join</span>(Station, MesureReelle.id_station == Station.id_station)
+    .<span class="fn">filter</span>(MesureReelle.id_station == station_obj.id_station,
+            MesureReelle.timestamp &gt;= date_debut,
+            MesureReelle.timestamp &lt;= date_fin)
+    .<span class="fn">order_by</span>(MesureReelle.timestamp.asc())</code></pre>
       </div>
     </div>
-    <p class="caption-line">:nom_station, :date_debut, :date_fin &mdash; les paramètres reçus par la route GET /v1/historique, implémentée en production avec l&rsquo;ORM SQLAlchemy plutôt qu&rsquo;en SQL brut</p>
+    <p class="caption-line">:nom_station, :date_debut, :date_fin &mdash; les paramètres reçus par la route GET /v1/historique. Correspondance directe : WHERE/AND &rarr; .filter(), JOIN &rarr; .join(), ORDER BY &rarr; .order_by() &mdash; en production la station est optionnelle (404 si fournie et introuvable) et une limite de 1000 lignes est appliquée</p>
     <div class="chip-grid" style="margin-top:1.2rem; max-width:none;">
       <div class="chip">idx_reelle_station_timestamp<br>mesure_reelle (id_station, timestamp)</div>
       <div class="chip">idx_prevision_station_date<br>mesure_prevision (id_station, date, heure)</div>
