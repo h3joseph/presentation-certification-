@@ -573,6 +573,14 @@
   .schema-table td.badge{ text-align:right; font-size:0.5rem; font-weight:700; letter-spacing:0.02em; }
   .schema-table tr.pk td.badge{ color:var(--orange-deep); }
   .schema-table tr.fk td.badge{ color:var(--lime-deep); }
+  .schema-uq{
+    font-family:var(--font-mono);
+    font-size:0.5rem;
+    color:var(--ink-soft);
+    padding:0.28rem 0.6rem;
+    border-top:1px solid var(--line);
+    white-space:normal;
+  }
   .entity-grid{
     display:flex;
     flex-wrap:wrap;
@@ -1037,33 +1045,75 @@
   <section class="slide slide--light">
     <p class="kicker">Étape 1 · Base de données</p>
     <h2 class="big">Du MCD au modèle physique</h2>
-    <pre class="code" style="text-align:left;max-width:720px;font-size:0.78rem;"><code>CREATE TABLE station (
-  id_station       SERIAL PRIMARY KEY,
-  code             VARCHAR(20) UNIQUE,
-  nom              VARCHAR(100) NOT NULL,
-  latitude         DOUBLE PRECISION NOT NULL,
-  longitude        DOUBLE PRECISION NOT NULL,
-  pays             VARCHAR(50),
-  zone_climatique  VARCHAR(50),
-  altitude         INTEGER
-);
+    <div class="schema-wrap">
+      <svg class="schema-links"></svg>
+      <div class="schema-grid">
 
-CREATE TABLE mesure_reelle (
-  id_reelle          SERIAL PRIMARY KEY,
-  id_station         INTEGER NOT NULL REFERENCES station,
-  timestamp          TIMESTAMP NOT NULL,
-  temperature        DOUBLE PRECISION,
-  humidite_relative  DOUBLE PRECISION,
-  precipitation      DOUBLE PRECISION,
-  vitesse_vent       DOUBLE PRECISION,
-  rayonnement        DOUBLE PRECISION,
-  humidite_sol       DOUBLE PRECISION,
-  source_fichier     VARCHAR(200),
-  UNIQUE (id_station, timestamp)
-);
-<span class="fn">-- + mesure_prevision, source, score : même logique,
--- clés étrangères vers station et/ou source</span></code></pre>
-    <p class="caption-line">Modèle physique réel (SQLAlchemy, <code>database/models.py</code>), vérifié avec <code>\d</code> dans PostgreSQL après exécution de <code>database/init_db.py</code> &mdash; 5 tables au total, toutes les clés étrangères et contraintes d&rsquo;unicité du MCD sont bien appliquées</p>
+        <div class="schema-card" data-entity="STATION">
+          <div class="schema-head" style="background:var(--forest-deep);">STATION</div>
+          <table class="schema-table"><tbody>
+            <tr class="pk"><td>id_station</td><td>SERIAL</td><td class="badge">PK</td></tr>
+            <tr><td>code</td><td>VARCHAR(20)</td><td class="badge">UQ</td></tr>
+            <tr><td>nom</td><td>VARCHAR(100)</td><td></td></tr>
+            <tr><td>latitude</td><td>DOUBLE PRECISION</td><td></td></tr>
+            <tr><td>longitude</td><td>DOUBLE PRECISION</td><td></td></tr>
+            <tr><td>pays</td><td>VARCHAR(50)</td><td></td></tr>
+            <tr><td>zone_climatique</td><td>VARCHAR(50)</td><td></td></tr>
+            <tr><td>altitude</td><td>INTEGER</td><td></td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="schema-card" data-entity="SOURCE">
+          <div class="schema-head" style="background:var(--orange-deep);">SOURCE</div>
+          <table class="schema-table"><tbody>
+            <tr class="pk"><td>id_source</td><td>SERIAL</td><td class="badge">PK</td></tr>
+            <tr><td>nom</td><td>VARCHAR(50)</td><td></td></tr>
+            <tr><td>url_base</td><td>VARCHAR(200)</td><td></td></tr>
+            <tr><td>type</td><td>VARCHAR(50)</td><td></td></tr>
+            <tr><td>gratuite</td><td>BOOLEAN</td><td></td></tr>
+            <tr><td>description</td><td>TEXT</td><td></td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="schema-card" data-entity="MESURE_PREVISION">
+          <div class="schema-head" style="background:var(--lime-deep);">MESURE_PREVISION</div>
+          <table class="schema-table"><tbody>
+            <tr class="pk"><td>id_mesure</td><td>SERIAL</td><td class="badge">PK</td></tr>
+            <tr class="fk"><td>id_station</td><td>INTEGER</td><td class="badge">FK</td></tr>
+            <tr class="fk"><td>id_source</td><td>INTEGER</td><td class="badge">FK</td></tr>
+            <tr><td>date, heure</td><td>DATE, INTEGER</td><td></td></tr>
+            <tr><td>+ 8 attributs météo</td><td>DOUBLE PREC. / BOOL / VARCHAR</td><td></td></tr>
+          </tbody></table>
+          <div class="schema-uq">UNIQUE (station, source, date, heure)</div>
+        </div>
+
+        <div class="schema-card" data-entity="MESURE_REELLE">
+          <div class="schema-head" style="background:var(--forest-deep);">MESURE_REELLE</div>
+          <table class="schema-table"><tbody>
+            <tr class="pk"><td>id_reelle</td><td>SERIAL</td><td class="badge">PK</td></tr>
+            <tr class="fk"><td>id_station</td><td>INTEGER</td><td class="badge">FK</td></tr>
+            <tr><td>timestamp</td><td>TIMESTAMP</td><td></td></tr>
+            <tr><td>+ 6 mesures capteur</td><td>DOUBLE PRECISION</td><td></td></tr>
+            <tr><td>source_fichier</td><td>VARCHAR(200)</td><td></td></tr>
+          </tbody></table>
+          <div class="schema-uq">UNIQUE (station, timestamp)</div>
+        </div>
+
+        <div class="schema-card" data-entity="SCORE">
+          <div class="schema-head" style="background:var(--orange-deep);">SCORE</div>
+          <table class="schema-table"><tbody>
+            <tr class="pk"><td>id_score</td><td>SERIAL</td><td class="badge">PK</td></tr>
+            <tr class="fk"><td>id_station</td><td>INTEGER</td><td class="badge">FK</td></tr>
+            <tr class="fk"><td>id_source</td><td>INTEGER</td><td class="badge">FK</td></tr>
+            <tr><td>date_calcul</td><td>DATE</td><td></td></tr>
+            <tr><td>+ 11 métriques</td><td>DOUBLE PRECISION</td><td></td></tr>
+            <tr><td>source_gagnante</td><td>VARCHAR(50)</td><td></td></tr>
+          </tbody></table>
+          <div class="schema-uq">UNIQUE (station, source, date_calcul)</div>
+        </div>
+
+      </div>
+    </div>
   </section>
 
   <section class="slide slide--light">
